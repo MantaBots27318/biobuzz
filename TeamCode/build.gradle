@@ -24,6 +24,19 @@ android {
     }
 }
 
+// Les librairies de l'équipe vont ici (pas dans build.dependencies.gradle) pour que
+// les mises à jour du SDK venant d'upstream se fusionnent sans conflit.
+repositories {
+    maven { url = 'https://repo.dairy.foundation/releases' } // SolversLib, et Sloth pour le tuning Pedro
+}
+
 dependencies {
     implementation project(':FtcRobotController')
+
+    implementation 'com.pedropathing:revhub:3.0.1'
+    implementation 'com.pedropathing:tuning:1.0.1'
+
+    // SolversLib 0.3.6+ est la version prévue pour Pedro Pathing 3.x
+    implementation 'org.solverslib:core:0.3.6'
+    implementation 'org.solverslib:pedroPathing:0.3.6'
 }
