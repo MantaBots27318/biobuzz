@@ -6,6 +6,8 @@ fichiers Gradle à la racine, ni le `README.md` de FIRST : ils sont remplacés �
 Librairies : [Pedro Pathing 3](https://pedropathing.com/docs/pathing) (trajectoires) et
 [SolversLib](https://docs.seattlesolvers.com) (commandes et subsystems), déclarées dans `TeamCode/build.gradle`.
 
+Ce qu'on a appris des meilleures équipes, et la liste des priorités : [docs/recherche-top-equipes.md](docs/recherche-top-equipes.md).
+
 ## Organisation
 
 ```
@@ -69,6 +71,19 @@ sait le réparer en compétition. Tout le monde peut modifier tout le code, mais
 3. Coller le code généré par chaque tuner dans `pedro/Constants.java` (aux endroits marqués `TODO`).
 
 Tant que le Foresight Tuner n'a pas été fait, le TeleOp et l'Auto refusent de démarrer avec un message explicite.
+
+## Panels et Sloth
+
+- **Panels** (réglage en direct et télémétrie) : se connecter au Wi-Fi du robot et ouvrir l'interface Panels
+  dans le navigateur. Les valeurs changées dans Panels sont perdues au prochain déploiement : recopier
+  dans le code celles qu'on garde.
+- **Sloth** (rechargement à chaud) : après une installation complète, la tâche `deploySloth` (VS Code :
+  **FTC: Hot Reload (Sloth)**) envoie seulement le code `teamcode` en une ou deux secondes. Attendre la fin
+  du chargement avant d'appuyer sur INIT.
+- **Installation complète obligatoire** après un changement de librairie ou de `build.gradle`, de
+  `FtcRobotController/`, du manifeste ou de `res/` (config matérielle comprise), et avant chaque compétition.
+- Si un ancien code revient sans cesse : `adb shell rm -rf /storage/emulated/0/FIRST/dairy/sloth/*`.
+- Les versions de Sloth, du plugin Load et le préfixe de Panels (`0.3.2+…`) doivent rester identiques.
 
 ## Workflow Git
 
