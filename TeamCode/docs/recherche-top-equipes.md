@@ -69,17 +69,17 @@ peine d'être copié dans notre code, et ce qui ne l'est pas.
 
 - [x] Corriger la symétrie rouge/bleu dans `Alliance.java` (rotation de 180°)
 - [x] Remettre **Panels** (version compatible Sloth)
-- [ ] Classe `MatchState` : position et alliance de fin d'Auto, relues au démarrage du TeleOp
-- [ ] Lecture périodique de la tension et compensation des puissances
-- [ ] Timeout global sur l'Auto
-- [ ] OpMode **SystemCheck** qui fait tourner chaque moteur et servo un par un
-- [ ] Config matérielle BIOBUZZ dans `res/xml/`
-- [ ] Noms d'OpModes préfixés (« A. TeleOp ») pour qu'ils sortent en tête sur le Driver Hub
+- [x] Classe `MatchState` : position et alliance de fin d'Auto, relues au démarrage du TeleOp
+- [x] Lecture périodique de la tension et compensation des puissances
+- [x] Timeout global sur l'Auto (et un temps max par trajectoire)
+- [x] OpMode **SystemCheck** qui fait tourner chaque moteur et servo un par un
+- [ ] Config matérielle BIOBUZZ dans `res/xml/` (en attente du câblage du robot)
+- [x] Noms d'OpModes préfixés (« A. TeleOp ») pour qu'ils sortent en tête sur le Driver Hub
 
 ### Priorité 2 : pour gagner du temps
 
 - [x] **Sloth** pour recharger le code en moins d'une seconde (voir plus bas)
-- [ ] Script qui met à jour `pedro/procedures/` depuis le Quickstart, avec la révision épinglée
+- [x] Script qui met à jour `pedro/procedures/` depuis le Quickstart, avec la révision épinglée
       dans un fichier (comme MSET)
 - [ ] Télémétrie Driver Hub construite seulement quand elle est réellement envoyée (toutes les 250 ms)
 - [ ] Journal CSV de chaque match

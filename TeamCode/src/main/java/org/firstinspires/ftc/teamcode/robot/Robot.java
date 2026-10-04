@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
  * À créer dans initialize(), après reset() du CommandScheduler.
  */
 public class Robot {
+    public final BatteryVoltage battery;
     public final Drivetrain drivetrain;
     public final Intake intake;
 
@@ -21,8 +22,9 @@ public class Robot {
         // par le CommandScheduler à la fin de chaque run()
         CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
 
+        battery = new BatteryVoltage(hardwareMap);
         drivetrain = new Drivetrain(hardwareMap);
-        intake = new Intake(hardwareMap);
+        intake = new Intake(hardwareMap, battery);
 
         CommandScheduler.getInstance().registerSubsystem(drivetrain, intake);
     }

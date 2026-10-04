@@ -2,11 +2,14 @@ package org.firstinspires.ftc.teamcode.opmodes.auto;
 
 import static com.pedropathing.api.Paths.line;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.api.PoseFactory;
-import com.pedropathing.follower.Follower;
 import com.pedropathing.math.Pose;
+import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
+import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
@@ -15,13 +18,20 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.util.Alliance;
 import org.firstinspires.ftc.teamcode.util.LoopTimer;
+import org.firstinspires.ftc.teamcode.util.MatchState;
 
 /**
  * Un seul Auto pour les deux alliances : on choisit l'alliance pendant l'init, et les positions
  * (écrites côté bleu) sont transformées par Alliance.poses().
  */
-@Autonomous(name = "Auto", group = "Competition", preselectTeleOp = "TeleOp")
+@Configurable
+@Autonomous(name = "A. Auto", group = "Match", preselectTeleOp = "A. TeleOp")
 public class MainAuto extends CommandOpMode {
+    /** Temps max par trajectoire : si le robot est bloqué (partenaire, adversaire), on passe à la suite. */
+    public static long PATH_TIMEOUT_MS = 5000;
+    /** Temps max pour la partie « marquer » : au-delà, on abandonne et on va se garer. */
+    public static long SCORING_TIMEOUT_MS = 25000;
+
     private Robot robot;
     private Alliance alliance = Alliance.BLUE;
     private final LoopTimer loopTimer = new LoopTimer();
@@ -48,26 +58,41 @@ public class MainAuto extends CommandOpMode {
         Pose score = p.of(16, 128, -45);
         Pose park = p.of(68, 96, -90);
 
+        robot.drivetrain.setAlliance(alliance);
         robot.drivetrain.setPose(start);
-        Follower follower = robot.drivetrain.follower;
 
-        schedule(new SequentialCommandGroup(
-                new FollowPathCommand(follower, line(start, score).linear(start, score)),
+        Command scoring = new SequentialCommandGroup(
+                follow(line(start, score).linear(start, score)),
                 new InstantCommand(robot.intake::eject, robot.intake),
                 new WaitCommand(500),
+                new InstantCommand(robot.intake::stop, robot.intake)
+        ).withTimeout(SCORING_TIMEOUT_MS);
+
+        // Le parking part de la position réelle, puisque le timeout peut couper la séquence n'importe où
+        schedule(new SequentialCommandGroup(
+                scoring,
                 new InstantCommand(robot.intake::stop, robot.intake),
-                new FollowPathCommand(follower, line(score, park).linear(score, park), false)
+                new DeferredCommand(() -> {
+                    Pose here = robot.drivetrain.pose();
+                    return new FollowPathCommand(robot.drivetrain.follower, line(here, park).linear(here, park), false);
+                }, null)
         ));
     }
 
     @Override
     public void run() {
         super.run();
+        // À chaque boucle, pour que le TeleOp reprenne la bonne position même si l'Auto est arrêté avant la fin
+        MatchState.save(alliance, robot.drivetrain.pose());
 
         loopTimer.tick();
         telemetry.addData("Alliance", alliance);
         telemetry.addData("Boucle", "%.0f Hz", loopTimer.hz());
         telemetry.addData("Pose", robot.drivetrain.pose());
         telemetry.update();
+    }
+
+    private Command follow(Path path) {
+        return new FollowPathCommand(robot.drivetrain.follower, path).withTimeout(PATH_TIMEOUT_MS);
     }
 }

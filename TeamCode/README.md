@@ -13,18 +13,41 @@ Ce qu'on a appris des meilleures équipes, et la liste des priorités : [docs/re
 ```
 teamcode/
 ├── opmodes/
-│   ├── teleop/MainTeleOp     le TeleOp de match
-│   └── auto/MainAuto         un seul Auto, alliance choisie pendant l'init (X = bleu, B = rouge)
+│   ├── teleop/MainTeleOp     « A. TeleOp », le TeleOp de match
+│   ├── auto/MainAuto         « A. Auto », un seul Auto, alliance choisie pendant l'init (X = bleu, B = rouge)
+│   └── test/                 SystemCheck (check d'avant-match), SlothTest…
 ├── subsystems/               1 classe = 1 mécanisme (Drivetrain, Intake…)
 ├── robot/
 │   ├── Robot                 crée tous les subsystems, active les bulk reads
+│   ├── BatteryVoltage        tension de la batterie (relue toutes les 500 ms) et compensation
 │   └── HardwareNames         tous les noms de la config Driver Hub
 ├── pedro/
 │   ├── Constants             réglages Pedro (sortie de l'AutoTune)
 │   ├── Tuning                procédures AutoTune enregistrées
 │   └── procedures/           copié du Quickstart Pedro, ne pas modifier
-└── util/                     Alliance, LoopTimer…
+└── util/                     Alliance, MatchState, LoopTimer…
 ```
+
+Le script `scripts/update-pedro-procedures.sh` remplace `pedro/procedures/` par la dernière version du
+Quickstart Pedro et note la révision dans `pedro/procedures/QUICKSTART_REV`. À lancer quand Pedro sort une
+mise à jour, puis faire un commit à part.
+
+## Pendant un match
+
+1. **Auto** (« A. Auto ») : choisir l'alliance pendant l'init (X = bleu, B = rouge). L'Auto enregistre à
+   chaque boucle sa position et son alliance (`MatchState`). Chaque trajectoire a un temps max
+   (`PATH_TIMEOUT_MS`), et au-delà de `SCORING_TIMEOUT_MS` le robot abandonne et va se garer.
+2. **TeleOp** (« A. TeleOp », présélectionné à la fin de l'Auto) : il reprend la position et l'alliance de
+   l'Auto si celui-ci a tourné il y a moins de 3 minutes. Sinon, placer le robot dos au pilote et choisir
+   l'alliance pendant l'init. BACK (manette 1) recale le cap quand le robot est dos au pilote.
+3. Après un rechargement Sloth ou un redémarrage de l'app, `MatchState` est vide : le TeleOp repart du
+   cas « robot dos au pilote ».
+
+Réglage à faire une fois sur le terrain : `Drivetrain.RED_DRIVER_FORWARD_DEG`, le cap Pedro d'un robot
+qui s'éloigne du pilote rouge (modifiable en direct dans Panels, puis à recopier dans le code).
+
+**Dans les pits** : lancer « System Check » (groupe Test) pour faire tourner chaque moteur et servo un par un
+et vérifier qu'il est bien branché.
 
 ## Règles
 
