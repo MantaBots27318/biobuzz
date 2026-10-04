@@ -12,9 +12,9 @@ public enum Alliance {
 
     public PoseFactory poses() {
         PoseFactory blue = PoseFactory.degrees();
-        // TODO à vérifier selon la symétrie du terrain BIOBUZZ :
-        // miroir gauche/droite = mirrorX(72), miroir haut/bas = mirrorY(72),
-        // rotation de 180° autour du centre = mirrorAroundPoint(72, 72)
-        return this == BLUE ? blue : blue.mirrorX(72);
+        // Le terrain BIOBUZZ est symétrique par rotation de 180° autour du centre (manuel, section 9 :
+        // GARDENS dans des coins opposés, cellules rouge et bleue de part et d'autre de la HIVE),
+        // donc (x, y, θ) -> (144 - x, 144 - y, θ + 180°)
+        return this == BLUE ? blue : blue.mirrorAroundPoint(72, 72);
     }
 }
