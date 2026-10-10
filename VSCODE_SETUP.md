@@ -107,18 +107,27 @@ The robot is reached over Wi-Fi, so your computer has no internet while connecte
 1. **Join the Control Hub's Wi-Fi network** (`FTC-xxxx`).
 2. **Connect adb to the robot.** From the Command Palette (`Cmd+Shift+P` / `Ctrl+Shift+P`), choose "Tasks: Run Task", then **FTC: Connect via ADB (Wi-Fi)**. This runs `adb connect 192.168.43.1:5555`. You can also type that command yourself in the terminal.
 3. **Confirm the robot is visible.** Run the task **FTC: ADB Devices** (or `adb devices`). Your robot should be listed as `device`. If it says `offline` or `unauthorized`, or isn't listed, see Troubleshooting.
-4. **Build and deploy.** Press `Cmd+Shift+B` (`Ctrl+Shift+B` on Windows). This is the default build task, **FTC: Build and Install (Deploy)**, which runs `installDebug`: it compiles your code and installs the app on the robot.
+4. **Build and deploy.** Press `Cmd+Shift+B` (`Ctrl+Shift+B` on Windows). This is the default build task, **FTC: Build and Install (Deploy)**, which runs `removeSlothRemote` then `installDebug`: it clears any hot-reloaded code from the robot, compiles your code and installs the app.
 5. **Run your OpMode.** On the Driver Station, select your OpMode and press Init or Start as usual.
 
 **Compile or deploy?** `assembleDebug` only compiles (no robot needed, good to check your code). `installDebug` compiles and then installs on the robot, so it fails if no device is connected. `installDebug` already includes `assembleDebug`.
 
 If you use a USB cable instead of Wi-Fi, skip steps 1 and 2: plug the Control Hub in and check `adb devices`.
 
+### Hot reload with Sloth
+
+After one full install, run the task **FTC: Hot Reload (Sloth)** (`deploySloth`) for everyday code changes: it sends only the `org.firstinspires.ftc.teamcode` code and takes a second or two instead of 40+. The new code loads when the current OpMode ends; wait for the load to finish before pressing Init.
+
+Use the full install (`Cmd+Shift+B`) instead after changing a library or a `build.gradle`, anything in `FtcRobotController/`, the manifest or `res/` (including the hardware config), and before every competition, so you know exactly what runs on the robot.
+
+If you don't run a device yourself, the Sloth tasks connect adb to `192.168.43.1` and then disconnect every network adb device when they finish.
+
 ## Tasks
 
 | Task | What it does |
 |---|---|
-| FTC: Build and Install (Deploy) | Builds and installs to the robot (`Cmd+Shift+B`) |
+| FTC: Build and Install (Deploy) | Clears hot-reloaded code, then builds and installs to the robot (`Cmd+Shift+B`) |
+| FTC: Hot Reload (Sloth) | Sends only the team code to the robot in a second or two (`deploySloth`) |
 | FTC: Clean Project | Deletes build outputs. Use it if a build behaves strangely |
 | FTC: Connect via ADB (Wi-Fi) | Runs `adb connect 192.168.43.1:5555` |
 | FTC: ADB Devices | Lists connected devices (`adb devices`). Your robot should show as `device` |
