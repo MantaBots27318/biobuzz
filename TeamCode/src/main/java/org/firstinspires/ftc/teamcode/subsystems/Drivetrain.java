@@ -11,15 +11,15 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.util.Alliance;
 
 /**
- * Base roulante. Le Follower Pedro gère à la fois le pilotage manuel (TeleOp) et le suivi de
- * trajectoires (Auto, via FollowPathCommand). periodic() est appelé une fois par boucle par le
- * CommandScheduler : c'est le seul endroit où on appelle follower.update().
+ * Drivetrain. The Pedro Follower handles both manual driving (TeleOp) and path following
+ * (Auto, through FollowPathCommand). The CommandScheduler calls periodic() once per loop:
+ * it is the only place where follower.update() is called.
  */
 @Configurable
 public class Drivetrain extends SubsystemBase {
     /**
-     * TODO à mesurer sur le terrain : cap Pedro (en degrés) d'un robot qui s'éloigne du pilote rouge.
-     * Le pilote bleu est en face (terrain symétrique par rotation de 180°), d'où + 180° pour lui.
+     * TODO measure on the field: Pedro heading (degrees) of a robot moving away from the red driver.
+     * The blue driver is on the opposite side (180° rotational symmetry), hence + 180° for them.
      */
     public static double RED_DRIVER_FORWARD_DEG = 0;
 
@@ -35,22 +35,22 @@ public class Drivetrain extends SubsystemBase {
         follower.update();
     }
 
-    /** Choisit de quel côté du terrain se trouve le pilote, pour le pilotage relatif au terrain. */
+    /** Sets which side of the field the driver stands on, for field-centric driving. */
     public void setAlliance(Alliance alliance) {
         this.alliance = alliance;
     }
 
     /**
-     * Pilotage relatif au terrain : pousser le stick vers l'avant éloigne toujours le robot du pilote,
-     * quelle que soit son orientation. Repère Pedro : +x vers l'avant, +y vers la gauche,
-     * rotation positive dans le sens antihoraire.
+     * Field-centric driving: pushing the stick forward always moves the robot away from the driver,
+     * whatever its orientation. Pedro frame: +x forward, +y left, positive rotation is
+     * counter-clockwise.
      */
     public void driveFieldCentric(double forward, double lateral, double turn) {
         follower.manual(ManualDrive.fieldCentric(
                 forward, lateral, turn, follower.pose().heading(), -driverForward()));
     }
 
-    /** À utiliser quand le robot est tourné dos au pilote : recale le cap sans toucher à x et y. */
+    /** Use when the robot faces away from the driver: resets the heading without changing x and y. */
     public void resetHeading() {
         follower.setHeading(driverForward());
     }

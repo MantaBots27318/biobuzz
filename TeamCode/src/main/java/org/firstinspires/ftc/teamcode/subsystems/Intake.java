@@ -9,17 +9,17 @@ import org.firstinspires.ftc.teamcode.robot.BatteryVoltage;
 import org.firstinspires.ftc.teamcode.robot.HardwareNames;
 
 /**
- * Exemple de mécanisme : à adapter au robot BIOBUZZ.
- * Modèle à suivre pour chaque subsystem : les réglages en haut (modifiables en direct dans Panels
- * grâce à @Configurable), une API de haut niveau (collect / eject / stop), et aucun accès au
- * hardware en dehors de cette classe.
+ * Example mechanism: adapt it to the BIOBUZZ robot.
+ * The template for every subsystem: settings at the top (editable live in Panels thanks to
+ * @Configurable), a high-level API (collect / eject / stop), and no hardware access outside
+ * this class.
  */
 @Configurable
 public class Intake extends SubsystemBase {
     public static double COLLECT_POWER = 1.0;
     public static double EJECT_POWER = -0.6;
 
-    // MotorEx n'envoie une nouvelle puissance que si elle a changé, ce qui évite des écritures inutiles sur le hub
+    // MotorEx only sends a new power when it changed, which avoids useless writes to the hub
     private final MotorEx motor;
     private final BatteryVoltage battery;
 

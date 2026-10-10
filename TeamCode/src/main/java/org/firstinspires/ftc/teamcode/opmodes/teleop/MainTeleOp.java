@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.util.LoopTimer;
 import org.firstinspires.ftc.teamcode.util.MatchState;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
-// Le préfixe « A. » fait apparaître l'OpMode en tête de liste sur le Driver Hub
+// The "A." prefix puts the OpMode at the top of the Driver Hub list
 @TeleOp(name = "A. TeleOp", group = "Match")
 public class MainTeleOp extends CommandOpMode {
     private Robot robot;
@@ -26,17 +26,17 @@ public class MainTeleOp extends CommandOpMode {
         reset();
         robot = new Robot(hardwareMap);
 
-        // Si un Auto vient de tourner, on reprend son alliance et sa position
+        // If an Auto just ran, reuse its alliance and pose
         poseFromAuto = MatchState.isFresh();
         alliance = poseFromAuto ? MatchState.alliance() : Alliance.BLUE;
 
         GamepadEx driver = new GamepadEx(gamepad1);
         GamepadEx operator = new GamepadEx(gamepad2);
 
-        // Pilote : à utiliser quand le robot est tourné dos au pilote
+        // Driver: use when the robot faces away from the driver
         driver.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(robot.drivetrain::resetHeading);
 
-        // Opérateur : l'intake tourne tant que le bouton est maintenu
+        // Operator: the intake runs while the button is held
         operator.getGamepadButton(GamepadKeys.Button.A)
                 .whenHeld(new StartEndCommand(robot.intake::collect, robot.intake::stop, robot.intake));
         operator.getGamepadButton(GamepadKeys.Button.B)
@@ -47,8 +47,8 @@ public class MainTeleOp extends CommandOpMode {
     public void initialize_loop() {
         if (gamepad1.x) alliance = Alliance.BLUE;
         if (gamepad1.b) alliance = Alliance.RED;
-        telemetry.addData("Alliance", "%s   (X = bleu, B = rouge)", alliance);
-        telemetry.addData("Position", poseFromAuto ? "reprise de l'Auto" : "robot à placer dos au pilote");
+        telemetry.addData("Alliance", "%s   (X = blue, B = red)", alliance);
+        telemetry.addData("Pose", poseFromAuto ? "taken from the Auto" : "place the robot facing away from the driver");
         telemetry.update();
     }
 
@@ -64,14 +64,14 @@ public class MainTeleOp extends CommandOpMode {
 
     @Override
     public void run() {
-        // Les axes de la manette sont inversés par rapport au repère Pedro, d'où les signes moins.
-        // On donne la consigne avant super.run() pour que follower.update() l'applique dans la même boucle.
+        // The gamepad axes are inverted relative to Pedro's frame, hence the minus signs.
+        // Set the input before super.run() so follower.update() applies it in the same loop.
         robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
         super.run();
 
         loopTimer.tick();
-        telemetry.addData("Boucle", "%.0f Hz", loopTimer.hz());
-        telemetry.addData("Batterie", "%.1f V", robot.battery.volts());
+        telemetry.addData("Loop", "%.0f Hz", loopTimer.hz());
+        telemetry.addData("Battery", "%.1f V", robot.battery.volts());
         telemetry.addData("Pose", robot.drivetrain.pose());
         telemetry.update();
     }

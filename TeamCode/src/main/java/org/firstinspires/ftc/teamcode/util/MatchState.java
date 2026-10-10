@@ -3,12 +3,12 @@ package org.firstinspires.ftc.teamcode.util;
 import com.pedropathing.math.Pose;
 
 /**
- * Ce que l'Auto transmet au TeleOp : l'alliance et la dernière position du robot.
- * L'Auto l'enregistre à chaque boucle, pour que ce soit à jour même s'il est arrêté avant la fin.
- * Les valeurs sont perdues au redémarrage de l'app et à chaque rechargement Sloth.
+ * What the Auto hands over to the TeleOp: the alliance and the robot's last pose.
+ * The Auto saves it every loop, so it is up to date even if the Auto is stopped early.
+ * The values are lost when the app restarts and on every Sloth reload.
  */
 public final class MatchState {
-    /** Au-delà, on considère que le TeleOp ne suit pas cet Auto (entraînement, autre match). */
+    /** Past this age, the TeleOp is assumed not to follow that Auto (practice, another match). */
     public static final long MAX_AGE_MS = 3 * 60_000;
 
     private static Alliance alliance;

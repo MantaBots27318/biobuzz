@@ -17,13 +17,13 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Check d'avant-match : teste un par un chaque moteur, servo et servo continu de la config active,
- * sans rien connaître du robot. À lancer dans les pits après chaque réparation.
+ * Pre-match check: tests every motor, servo and continuous servo in the active configuration one by
+ * one, without knowing anything about the robot. Run it in the pits after every repair.
  *
- * Manette 1 : gauche/droite du pad = appareil précédent/suivant.
- * Moteur ou servo continu : A maintenu = sens +, B maintenu = sens -.
- * Servo : Y = position 0,5, haut/bas du pad = +/- 0,05. Un servo n'est commandé qu'après un appui,
- * pour ne pas forcer un mécanisme en butée.
+ * Gamepad 1: dpad left/right = previous/next device.
+ * Motor or continuous servo: hold A = + direction, hold B = - direction.
+ * Servo: Y = position 0.5, dpad up/down = +/- 0.05. A servo is only commanded after a press,
+ * so a mechanism is never forced against its hard stop.
  */
 @TeleOp(name = "System Check", group = "Test")
 public class SystemCheck extends OpMode {
@@ -32,7 +32,7 @@ public class SystemCheck extends OpMode {
 
     private final List<HardwareDevice> devices = new ArrayList<>();
     private final List<String> names = new ArrayList<>();
-    // Position envoyée à chaque servo, suivie ici car getPosition() ne dit rien tant qu'on n'a rien envoyé
+    // Position sent to each servo, tracked here because getPosition() means nothing until a position is sent
     private final Map<Servo, Double> servoTargets = new HashMap<>();
     private int index = 0;
     private boolean lastLeft, lastRight, lastUp, lastDown;
@@ -55,7 +55,7 @@ public class SystemCheck extends OpMode {
     @Override
     public void loop() {
         if (devices.isEmpty()) {
-            telemetry.addLine("Aucun moteur ni servo dans la config active");
+            telemetry.addLine("No motor or servo in the active configuration");
             telemetry.update();
             return;
         }
@@ -64,18 +64,18 @@ public class SystemCheck extends OpMode {
         if (gamepad1.dpad_left && !lastLeft) select(-1);
 
         HardwareDevice device = devices.get(index);
-        telemetry.addData("Appareil", "%d / %d : %s", index + 1, devices.size(), names.get(index));
-        telemetry.addData("Branché sur", device.getConnectionInfo());
+        telemetry.addData("Device", "%d / %d: %s", index + 1, devices.size(), names.get(index));
+        telemetry.addData("Connected to", device.getConnectionInfo());
 
         if (device instanceof DcMotorEx) {
             DcMotorEx motor = (DcMotorEx) device;
             motor.setPower(direction() * MOTOR_TEST_POWER);
-            telemetry.addData("Type", "moteur");
-            telemetry.addData("Encodeur", motor.getCurrentPosition());
-            telemetry.addData("Courant", "%.2f A", motor.getCurrent(CurrentUnit.AMPS));
+            telemetry.addData("Type", "motor");
+            telemetry.addData("Encoder", motor.getCurrentPosition());
+            telemetry.addData("Current", "%.2f A", motor.getCurrent(CurrentUnit.AMPS));
         } else if (device instanceof CRServo) {
             ((CRServo) device).setPower(direction() * MOTOR_TEST_POWER);
-            telemetry.addData("Type", "servo continu");
+            telemetry.addData("Type", "continuous servo");
         } else if (device instanceof Servo) {
             Servo servo = (Servo) device;
             Double target = servoTargets.get(servo);
@@ -87,13 +87,13 @@ public class SystemCheck extends OpMode {
                 servoTargets.put(servo, target);
             }
             telemetry.addData("Type", "servo");
-            telemetry.addData("Position", target == null ? "pas encore commandé" : String.format("%.2f", target));
+            telemetry.addData("Position", target == null ? "not commanded yet" : String.format("%.2f", target));
         }
 
         telemetry.addLine();
-        telemetry.addLine("Pad gauche/droite : changer d'appareil");
-        telemetry.addLine("A / B maintenu : faire tourner (moteur, servo continu)");
-        telemetry.addLine("Y, pad haut/bas : bouger (servo)");
+        telemetry.addLine("Dpad left/right: change device");
+        telemetry.addLine("Hold A / B: spin (motor, continuous servo)");
+        telemetry.addLine("Y, dpad up/down: move (servo)");
         telemetry.update();
 
         lastLeft = gamepad1.dpad_left;

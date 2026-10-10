@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 /**
- * Tension de la batterie, relue au plus toutes les REFRESH_MS : chaque lecture est une requête
- * au hub qui ralentit la boucle.
+ * Battery voltage, re-read at most every REFRESH_MS: each read is a request to the hub
+ * that slows the loop down.
  */
 @Configurable
 public class BatteryVoltage {
@@ -29,14 +29,14 @@ public class BatteryVoltage {
         return volts;
     }
 
-    /** Puissance à envoyer pour obtenir le même effet qu'avec une batterie à NOMINAL_VOLTS. */
+    /** Power to send to get the same effect as with a battery at NOMINAL_VOLTS. */
     public double compensate(double power) {
         return Range.clip(power * NOMINAL_VOLTS / volts(), -1, 1);
     }
 
     private void read() {
         double v = sensor.getVoltage();
-        // Une lecture ratée renvoie 0 : on garde la dernière valeur valable
+        // A failed read returns 0: keep the last valid value
         if (v > 0) volts = v;
         sinceRead.reset();
     }

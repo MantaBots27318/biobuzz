@@ -8,9 +8,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 /**
- * Le robot complet : crée tous les subsystems une seule fois, partagé par le TeleOp et l'Auto.
- * Un OpMode ne touche jamais au hardwareMap directement, il passe par cette classe.
- * À créer dans initialize(), après reset() du CommandScheduler.
+ * The whole robot: creates every subsystem once, shared by the TeleOp and the Auto.
+ * An OpMode never touches the hardwareMap directly, it goes through this class.
+ * Create it in initialize(), after the CommandScheduler's reset().
  */
 public class Robot {
     public final BatteryVoltage battery;
@@ -18,8 +18,8 @@ public class Robot {
     public final Intake intake;
 
     public Robot(HardwareMap hardwareMap) {
-        // Bulk reads : une seule lecture groupée par hub et par boucle, le cache est vidé
-        // par le CommandScheduler à la fin de chaque run()
+        // Bulk reads: one grouped read per hub per loop; the CommandScheduler clears the cache
+        // at the end of each run()
         CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
 
         battery = new BatteryVoltage(hardwareMap);
