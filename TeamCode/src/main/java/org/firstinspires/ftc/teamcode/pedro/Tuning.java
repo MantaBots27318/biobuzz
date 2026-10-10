@@ -12,11 +12,11 @@ import org.firstinspires.ftc.teamcode.pedro.procedures.PinpointTuner;
 import org.firstinspires.ftc.teamcode.pedro.procedures.Tests;
 
 /**
- * Procédures AutoTune de Pedro, pour une base mecanum avec un goBILDA Pinpoint.
- * Le dossier procedures/ vient tel quel du Quickstart Pedro (github.com/Pedro-Pathing/Quickstart) :
- * on ne le modifie pas, on le remplace à chaque mise à jour de Pedro.
- * Autre odométrie (OTOS, 2 ou 3 roues…) : remplacer PinpointTuner et PinpointLocalizer ici
- * et dans Constants par la procédure correspondante.
+ * Pedro AutoTune procedures, for a mecanum drivetrain with a goBILDA Pinpoint.
+ * The procedures/ folder comes unchanged from the Pedro Quickstart (github.com/Pedro-Pathing/Quickstart):
+ * never edit it, replace it on every Pedro update (scripts/update-pedro-procedures.sh).
+ * Other odometry (OTOS, 2 or 3 dead wheels...): replace PinpointTuner and PinpointLocalizer here
+ * and in Constants with the matching procedure.
  */
 public class Tuning {
     @Tuner

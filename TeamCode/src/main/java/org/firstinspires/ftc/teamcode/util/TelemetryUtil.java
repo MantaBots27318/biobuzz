@@ -9,8 +9,8 @@ public final class TelemetryUtil {
     private TelemetryUtil() {}
 
     /**
-     * Envoie chaque ligne de télémétrie à la fois au Driver Hub et à Panels.
-     * À appeler au début de l'init de chaque OpMode : {@code telemetry = TelemetryUtil.withPanels(telemetry);}
+     * Sends every telemetry line to both the Driver Hub and Panels.
+     * Call it at the start of every OpMode's init: {@code telemetry = TelemetryUtil.withPanels(telemetry);}
      */
     public static Telemetry withPanels(Telemetry driverHub) {
         return new JoinedTelemetry(PanelsTelemetry.INSTANCE.getFtcTelemetry(), driverHub);

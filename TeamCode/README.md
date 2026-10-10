@@ -1,133 +1,147 @@
-# Code MantaBots 27318 : BIOBUZZ 2026-2027
+# MantaBots 27318 code: BIOBUZZ 2026-2027
 
-Tout le code de l'équipe est dans `TeamCode/`. On ne modifie jamais `FtcRobotController/`, ni les
-fichiers Gradle à la racine, ni le `README.md` de FIRST : ils sont remplacés à chaque mise à jour du SDK.
+All of the team's code lives in `TeamCode/`. We never edit `FtcRobotController/`, the Gradle files at the
+root, or FIRST's `README.md`: they are replaced with every SDK update.
 
-Librairies : [Pedro Pathing 3](https://pedropathing.com/docs/pathing) (trajectoires) et
-[SolversLib](https://docs.seattlesolvers.com) (commandes et subsystems), déclarées dans `TeamCode/build.gradle`.
+Libraries: [Pedro Pathing 3](https://pedropathing.com/docs/pathing) (paths) and
+[SolversLib](https://docs.seattlesolvers.com) (commands and subsystems), declared in `TeamCode/build.gradle`.
 
-Ce qu'on a appris des meilleures équipes, et la liste des priorités : [docs/recherche-top-equipes.md](docs/recherche-top-equipes.md).
+What we learned from the best teams, and the priority list: [docs/top-teams-research.md](docs/top-teams-research.md).
 
-## Organisation
+## Structure
 
 ```
 teamcode/
 ├── opmodes/
-│   ├── teleop/MainTeleOp     « A. TeleOp », le TeleOp de match
-│   ├── auto/MainAuto         « A. Auto », un seul Auto, alliance choisie pendant l'init (X = bleu, B = rouge)
-│   └── test/                 SystemCheck (check d'avant-match), SlothTest…
-├── subsystems/               1 classe = 1 mécanisme (Drivetrain, Intake…)
+│   ├── teleop/MainTeleOp     "A. TeleOp", the match TeleOp
+│   ├── auto/MainAuto         "A. Auto", a single Auto, alliance chosen during init (X = blue, B = red)
+│   └── test/                 SystemCheck (pre-match check), SlothTest…
+├── subsystems/               1 class = 1 mechanism (Drivetrain, Intake…)
 ├── robot/
-│   ├── Robot                 crée tous les subsystems, active les bulk reads
-│   ├── BatteryVoltage        tension de la batterie (relue toutes les 500 ms) et compensation
-│   └── HardwareNames         tous les noms de la config Driver Hub
+│   ├── Robot                 creates every subsystem, enables bulk reads
+│   ├── BatteryVoltage        battery voltage (re-read every 500 ms) and compensation
+│   └── HardwareNames         every Driver Hub configuration name
 ├── pedro/
-│   ├── Constants             réglages Pedro (sortie de l'AutoTune)
-│   ├── Tuning                procédures AutoTune enregistrées
-│   └── procedures/           copié du Quickstart Pedro, ne pas modifier
-└── util/                     Alliance, MatchState, LoopTimer…
+│   ├── Constants             Pedro settings (AutoTune output)
+│   ├── Tuning                registered AutoTune procedures
+│   └── procedures/           copied from the Pedro Quickstart, do not edit
+└── util/                     Alliance, MatchState, TelemetryUtil, LoopTimer…
 ```
 
-Le script `scripts/update-pedro-procedures.sh` remplace `pedro/procedures/` par la dernière version du
-Quickstart Pedro et note la révision dans `pedro/procedures/QUICKSTART_REV`. À lancer quand Pedro sort une
-mise à jour, puis faire un commit à part.
+The script `scripts/update-pedro-procedures.sh` replaces `pedro/procedures/` with the latest version of the
+Pedro Quickstart and records the revision in `pedro/procedures/QUICKSTART_REV`. Run it when Pedro releases an
+update, then make a separate commit.
 
-## Pendant un match
+## During a match
 
-1. **Auto** (« A. Auto ») : choisir l'alliance pendant l'init (X = bleu, B = rouge). L'Auto enregistre à
-   chaque boucle sa position et son alliance (`MatchState`). Chaque trajectoire a un temps max
-   (`PATH_TIMEOUT_MS`), et au-delà de `SCORING_TIMEOUT_MS` le robot abandonne et va se garer.
-2. **TeleOp** (« A. TeleOp », présélectionné à la fin de l'Auto) : il reprend la position et l'alliance de
-   l'Auto si celui-ci a tourné il y a moins de 3 minutes. Sinon, placer le robot dos au pilote et choisir
-   l'alliance pendant l'init. BACK (manette 1) recale le cap quand le robot est dos au pilote.
-3. Après un rechargement Sloth ou un redémarrage de l'app, `MatchState` est vide : le TeleOp repart du
-   cas « robot dos au pilote ».
+1. **Auto** ("A. Auto"): choose the alliance during init (X = blue, B = red). On every loop, the Auto saves
+   its pose and alliance (`MatchState`). Each path has a time limit (`PATH_TIMEOUT_MS`), and past
+   `SCORING_TIMEOUT_MS` the robot gives up and goes to park.
+2. **TeleOp** ("A. TeleOp", preselected at the end of the Auto): it reuses the Auto's pose and alliance if
+   the Auto ran less than 3 minutes ago. Otherwise, place the robot facing away from the driver and choose
+   the alliance during init. BACK (gamepad 1) resets the heading when the robot faces away from the driver.
+3. After a Sloth reload or an app restart, `MatchState` is empty: the TeleOp falls back to the
+   "robot facing away from the driver" case.
 
-Réglage à faire une fois sur le terrain : `Drivetrain.RED_DRIVER_FORWARD_DEG`, le cap Pedro d'un robot
-qui s'éloigne du pilote rouge (modifiable en direct dans Panels, puis à recopier dans le code).
+To set once on the field: `Drivetrain.RED_DRIVER_FORWARD_DEG`, the Pedro heading of a robot moving away from
+the red driver (editable live in Panels, then copy it into the code).
 
-**Dans les pits** : lancer « System Check » (groupe Test) pour faire tourner chaque moteur et servo un par un
-et vérifier qu'il est bien branché.
+**In the pits**: run "System Check" (Test group) to spin every motor and servo one by one and check that it
+is plugged in correctly.
 
-## Règles
+## Gamepad controls
 
-- **Un OpMode ne touche jamais au `hardwareMap`.** Il crée un `Robot` et appelle les subsystems.
-- **Chaque subsystem a une API de haut niveau** (`intake.collect()`, pas `motor.set(1.0)` dans un OpMode).
-  Les réglages (`public static`) sont en haut de la classe, avec l'unité dans le nom si besoin.
-- **Rien de bloquant dans la boucle** : pas de `sleep()`, pas de `while` qui attend. On utilise des commandes
+Keep this up to date with every control change in `MainTeleOp`: it is the drivers' reference.
+
+| Gamepad | Input | Action |
+|---|---|---|
+| 1 (driver) | Left stick | Field-centric movement (forward = away from the driver) |
+| 1 (driver) | Right stick (X axis) | Rotation |
+| 1 (driver) | BACK | Reset the heading (robot facing away from the driver) |
+| 1 (driver) | X / B during init | Choose the blue / red alliance |
+| 2 (operator) | Hold A | Intake: collect |
+| 2 (operator) | Hold B | Intake: eject |
+
+## Rules
+
+- **An OpMode never touches the `hardwareMap`.** It creates a `Robot` and calls the subsystems.
+- **Every subsystem has a high-level API** (`intake.collect()`, not `motor.set(1.0)` in an OpMode).
+  Settings (`public static`) are at the top of the class, with the unit in the name when useful.
+- **Nothing blocks the loop**: no `sleep()`, no waiting `while`. Use commands
   (`WaitCommand`, `SequentialCommandGroup`, `StartEndCommand`…).
-- **`follower.update()` n'est appelé qu'à un seul endroit** : `Drivetrain.periodic()`.
-- **On surveille la fréquence de boucle** (télémétrie « Boucle »). Si elle chute après un changement, c'est ce changement.
-- **Nommage Java** : `PascalCase` pour les classes, `camelCase` pour les méthodes, `UPPER_SNAKE` pour les constantes.
-- Les vieux OpModes de test passent en `@Disabled` ou sont supprimés. Git garde l'historique, donc pas de code commenté.
+- **`follower.update()` is called in exactly one place**: `Drivetrain.periodic()`.
+- **Watch the loop rate** ("Loop" telemetry). If it drops after a change, that change is the cause.
+- **Java naming**: `PascalCase` for classes, `camelCase` for methods, `UPPER_SNAKE` for constants.
+- **Code comments and telemetry are in English.**
+- Old test OpModes get `@Disabled` or are deleted. Git keeps the history, so no commented-out code.
 
-## Câblage
+## Wiring
 
-À tenir à jour à chaque changement de config sur le Driver Hub.
+Keep this up to date with every configuration change on the Driver Hub.
 
-| Nom (config)  | Type              | Hub              | Port |
+| Name (config) | Type              | Hub              | Port |
 |---------------|-------------------|------------------|------|
-| `frontLeft`   | Moteur            | Control Hub      | ?    |
-| `frontRight`  | Moteur            | Control Hub      | ?    |
-| `backLeft`    | Moteur            | Control Hub      | ?    |
-| `backRight`   | Moteur            | Control Hub      | ?    |
+| `frontLeft`   | Motor             | Control Hub      | ?    |
+| `frontRight`  | Motor             | Control Hub      | ?    |
+| `backLeft`    | Motor             | Control Hub      | ?    |
+| `backRight`   | Motor             | Control Hub      | ?    |
 | `pinpoint`    | goBILDA Pinpoint  | Control Hub I2C  | ?    |
-| `intake`      | Moteur            | Expansion Hub    | ?    |
+| `intake`      | Motor             | Expansion Hub    | ?    |
 
-## Responsables
+## Owners
 
-Chaque mécanisme a une personne référente : elle connaît son code, relit les PR qui le touchent et
-sait le réparer en compétition. Tout le monde peut modifier tout le code, mais avec sa relecture.
+Every mechanism has an owner: they know its code, review the PRs that touch it and can fix it at a
+competition. Everyone can change any code, but with the owner's review.
 
-| Partie                         | Responsable | Remplaçant·e |
-|--------------------------------|-------------|--------------|
-| Drivetrain + réglage Pedro     |             |              |
-| Intake                         |             |              |
-| Auto (trajectoires)            |             |              |
-| CI / Git / mises à jour du SDK |             |              |
+| Part                           | Owner | Backup |
+|--------------------------------|-------|--------|
+| Drivetrain + Pedro tuning      |       |        |
+| Intake                         |       |        |
+| Auto (paths)                   |       |        |
+| CI / Git / SDK updates         |       |        |
 
-## Réglage Pedro (dès que la base roule)
+## Pedro tuning (once the drivetrain drives)
 
-1. Créer la config sur le Driver Hub avec les noms de `HardwareNames`.
-2. Lancer l'AutoTune dans cet ordre : **Mecanum Tuner, puis Pinpoint Tuner, puis Foresight Tuner, puis Tests**
-   (voir la [doc Pedro](https://pedropathing.com/docs/pathing/tuning)).
-3. Coller le code généré par chaque tuner dans `pedro/Constants.java` (aux endroits marqués `TODO`).
+1. Create the configuration on the Driver Hub with the names from `HardwareNames`.
+2. Run AutoTune in this order: **Mecanum Tuner, then Pinpoint Tuner, then Foresight Tuner, then Tests**
+   (see the [Pedro docs](https://pedropathing.com/docs/pathing/tuning)).
+3. Paste the code generated by each tuner into `pedro/Constants.java` (where it says `TODO`).
 
-Tant que le Foresight Tuner n'a pas été fait, le TeleOp et l'Auto refusent de démarrer avec un message explicite.
+Until the Foresight Tuner has been run, the TeleOp and the Auto refuse to start with an explicit message.
 
-## Panels et Sloth
+## Panels and Sloth
 
-- **Panels** (réglage en direct et télémétrie) : se connecter au Wi-Fi du robot et ouvrir
-  `http://192.168.43.1:8001` dans le navigateur. Panels n'affiche que la télémétrie qu'on lui envoie : chaque
-  OpMode commence son init par `telemetry = TelemetryUtil.withPanels(telemetry);`, qui envoie chaque ligne au
-  Driver Hub et à Panels. Les valeurs changées dans Panels sont perdues au prochain déploiement : recopier
-  dans le code celles qu'on garde.
-- **Sloth** (rechargement à chaud) : après une installation complète, la tâche `deploySloth` (VS Code :
-  **FTC: Hot Reload (Sloth)**) envoie seulement le code `teamcode` en une ou deux secondes. Attendre la fin
-  du chargement avant d'appuyer sur INIT.
-- **Installation complète obligatoire** après un changement de librairie ou de `build.gradle`, de
-  `FtcRobotController/`, du manifeste ou de `res/` (config matérielle comprise), et avant chaque compétition.
-- Si un ancien code revient sans cesse : `adb shell rm -rf /storage/emulated/0/FIRST/dairy/sloth/*`.
-- Les versions de Sloth, du plugin Load et le préfixe de Panels (`0.3.2+…`) doivent rester identiques.
+- **Panels** (live tuning and telemetry): connect to the robot's Wi-Fi and open
+  `http://192.168.43.1:8001` in the browser. Panels only shows the telemetry it is sent: every OpMode
+  starts its init with `telemetry = TelemetryUtil.withPanels(telemetry);`, which sends each line to both the
+  Driver Hub and Panels. Values changed in Panels are lost on the next deploy: copy the ones worth keeping
+  into the code.
+- **Sloth** (hot reload): after a full install, the `deploySloth` task (VS Code:
+  **FTC: Hot Reload (Sloth)**) sends only the `teamcode` code in a second or two. Wait for the load to
+  finish before pressing INIT.
+- **A full install is required** after changing a library or a `build.gradle`, `FtcRobotController/`, the
+  manifest or `res/` (including the hardware configuration), and before every competition.
+- If old code keeps coming back: `adb shell rm -rf /storage/emulated/0/FIRST/dairy/sloth/*`.
+- The Sloth version, the Load plugin version and the Panels prefix (`0.3.2+…`) must stay identical.
 
-## Workflow Git
+## Git workflow
 
-1. Créer une branche : `git switch -c feat/nom-du-truc`
-2. Faire des commits petits, avec des messages clairs (`Add lift PID`, pas `fix`)
-3. Pousser, puis ouvrir une Pull Request vers `master`
-4. Fusionner seulement quand le check « Build » est vert et qu'une autre personne a relu
-5. Avant chaque compétition : `git tag nom-de-la-competition`, puis `git push --tags`
+1. Create a branch: `git switch -c feat/thing-name`
+2. Make small commits with clear messages (`Add lift PID`, not `fix`)
+3. Push, then open a pull request to `master`
+4. Merge only when the "Build" check is green and someone else has reviewed it
+5. Before every competition: `git tag competition-name`, then `git push --tags`
 
-En compétition, on ne déploie que du code committé, pour toujours savoir ce qui tourne sur le robot.
+At a competition, only deploy committed code, so you always know what runs on the robot.
 
-### Mettre à jour le SDK FIRST
+### Updating the FIRST SDK
 
 ```bash
 git fetch upstream
 git merge upstream/master
 ```
 
-### Mettre à jour Pedro ou SolversLib
+### Updating Pedro or SolversLib
 
-Changer les versions dans `TeamCode/build.gradle`. Pour Pedro, recopier aussi `pedro/procedures/`
-depuis le [Quickstart](https://github.com/Pedro-Pathing/Quickstart).
+Change the versions in `TeamCode/build.gradle`. For Pedro, also run `scripts/update-pedro-procedures.sh` to
+refresh `pedro/procedures/` from the [Quickstart](https://github.com/Pedro-Pathing/Quickstart).

@@ -79,5 +79,5 @@ lint/generated/
 lint/outputs/
 lint/tmp/
 # lint/reports/
-# Réglages VS Code personnels (tasks.json, lui, est partagé)
+# Personal VS Code settings (tasks.json is shared)
 .vscode/settings.json

@@ -1,4 +1,4 @@
-// Plugin Load de Sloth : ajoute la tâche deploySloth (rechargement à chaud du code teamcode)
+// Sloth's Load plugin: adds the deploySloth task (hot reload of the teamcode code)
 buildscript {
     repositories {
         mavenCentral()
@@ -37,10 +37,10 @@ android {
     }
 }
 
-// Les librairies de l'équipe vont ici (pas dans build.dependencies.gradle) pour que
-// les mises à jour du SDK venant d'upstream se fusionnent sans conflit.
+// The team's libraries go here (not in build.dependencies.gradle) so that SDK updates
+// from upstream merge without conflicts.
 repositories {
-    maven { url = 'https://repo.dairy.foundation/releases' } // SolversLib, Sloth et Panels
+    maven { url = 'https://repo.dairy.foundation/releases' } // SolversLib, Sloth and Panels
 }
 
 dependencies {
@@ -49,12 +49,12 @@ dependencies {
     implementation 'com.pedropathing:revhub:3.0.1'
     implementation 'com.pedropathing:tuning:1.0.1'
 
-    // SolversLib 0.3.6+ est la version prévue pour Pedro Pathing 3.x
+    // SolversLib 0.3.6+ is the release line built for Pedro Pathing 3.x
     implementation 'org.solverslib:core:0.3.6'
     implementation 'org.solverslib:pedroPathing:0.3.6'
 
-    // Sloth et Panels : le préfixe de version de Panels (0.3.2+) doit rester égal à la version de Sloth
-    // et du plugin Load ci-dessus, sinon le rechargement à chaud casse
+    // Sloth and Panels: the Panels version prefix (0.3.2+) must stay equal to the Sloth version
+    // and the Load plugin above, otherwise hot reload breaks
     implementation 'dev.frozenmilk.sinister:Sloth:0.3.2'
     implementation 'com.bylazar.sloth:fullpanels:0.3.2+1.0.13'
 }

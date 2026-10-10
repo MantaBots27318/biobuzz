@@ -1,15 +1,17 @@
-## Quoi et pourquoi
+## What and why
 
-<!-- Ce que change cette PR, et pourquoi. -->
+<!-- What this PR changes, and why. -->
 
-## Testé ?
+## Tested?
 
-- [ ] Sur le robot
-- [ ] Seulement compilé (pas encore testé sur le robot)
+- [ ] On the robot
+- [ ] Only compiled (not tested on the robot yet)
 
 ## Checklist
 
-- [ ] Le check « Build » est vert
-- [ ] Les réglages (puissances, positions, gains) sont en haut du subsystem, pas en dur dans le code
-- [ ] Les nouveaux noms hardware sont dans `HardwareNames` et dans le tableau de câblage de `TeamCode/README.md`
-- [ ] Une autre personne a relu (idéalement le ou la responsable du subsystem)
+- [ ] The "Build" check is green
+- [ ] Settings (powers, positions, gains) are at the top of the subsystem, not hard-coded
+- [ ] New hardware names are in `HardwareNames` and in the "Wiring" table of `TeamCode/README.md`
+- [ ] New gamepad controls are in the "Gamepad controls" table of `TeamCode/README.md`
+- [ ] Code comments and telemetry are in English
+- [ ] Someone else has reviewed it (ideally the subsystem's owner)

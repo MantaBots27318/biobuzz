@@ -1,5 +1,5 @@
-# Vérifie que le code compile à chaque Pull Request et à chaque push sur master.
-# Si ce check est rouge, on ne fusionne pas.
+# Checks that the code compiles on every pull request and every push to master.
+# If this check is red, do not merge.
 name: Build
 
 on:
