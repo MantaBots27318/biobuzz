@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.util.Alliance;
 import org.firstinspires.ftc.teamcode.util.LoopTimer;
 import org.firstinspires.ftc.teamcode.util.MatchState;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 /**
  * Un seul Auto pour les deux alliances : on choisit l'alliance pendant l'init, et les positions
@@ -38,6 +39,7 @@ public class MainAuto extends CommandOpMode {
 
     @Override
     public void initialize() {
+        telemetry = TelemetryUtil.withPanels(telemetry);
         reset();
         robot = new Robot(hardwareMap);
     }

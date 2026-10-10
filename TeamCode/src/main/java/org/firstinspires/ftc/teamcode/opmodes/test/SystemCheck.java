@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ public class SystemCheck extends OpMode {
 
     @Override
     public void init() {
+        telemetry = TelemetryUtil.withPanels(telemetry);
         add(DcMotorEx.class);
         add(CRServo.class);
         add(Servo.class);
