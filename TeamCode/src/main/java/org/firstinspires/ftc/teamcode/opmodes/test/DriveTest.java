@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
  * Robot crée le Follower Pedro, qui ne démarre pas sans Pinpoint réglé.
  *
  * Manette 1 : stick gauche = avancer / translater, stick droit (gauche-droite) = tourner,
- * gâchette haute droite maintenue = mode lent, Y = lever la barre, A = baisser la barre.
+ * gâchette haute droite maintenue = mode lent, Y = barre active, A = barre au repos.
  */
 @TeleOp(name = "Drive Test (sans Pedro)", group = "Test")
 public class DriveTest extends CommandOpMode {
@@ -33,8 +33,8 @@ public class DriveTest extends CommandOpMode {
         register(drive, bar);
 
         GamepadEx driver = new GamepadEx(gamepad1);
-        driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(bar::raise, bar));
-        driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(bar::lower, bar));
+        driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(new InstantCommand(bar::activate, bar));
+        driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(new InstantCommand(bar::rest, bar));
     }
 
     @Override
@@ -46,7 +46,7 @@ public class DriveTest extends CommandOpMode {
         loopTimer.tick();
         telemetry.addData("Boucle", "%.0f Hz", loopTimer.hz());
         telemetry.addData("Mode", gamepad1.right_bumper ? "lent" : "normal");
-        telemetry.addData("Barre", bar.isUp() ? "levée" : "baissée");
+        telemetry.addData("Barre", bar.isActive() ? "active" : "repos");
         telemetry.update();
     }
 }

@@ -1,100 +1,38 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
-import static com.pedropathing.api.Paths.line;
-
 import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.api.PoseFactory;
-import com.pedropathing.math.Pose;
-import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
-import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
-import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.robot.Robot;
-import org.firstinspires.ftc.teamcode.util.Alliance;
-import org.firstinspires.ftc.teamcode.util.LoopTimer;
-import org.firstinspires.ftc.teamcode.util.MatchState;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 /**
- * Un seul Auto pour les deux alliances : on choisit l'alliance pendant l'init, et les positions
- * (écrites côté bleu) sont transformées par Alliance.poses().
+ * Auto minimal sans Pedro : avance tout droit un court instant, puis s'arrête.
+ * À remplacer quand l'odométrie sera montée.
  */
 @Configurable
 @Autonomous(name = "A. Auto", group = "Match", preselectTeleOp = "A. TeleOp")
 public class MainAuto extends CommandOpMode {
-    /** Temps max par trajectoire : si le robot est bloqué (partenaire, adversaire), on passe à la suite. */
-    public static long PATH_TIMEOUT_MS = 5000;
-    /** Temps max pour la partie « marquer » : au-delà, on abandonne et on va se garer. */
-    public static long SCORING_TIMEOUT_MS = 25000;
+    // TODO valeurs de remplacement, à régler sur le robot
+    public static double DRIVE_POWER = 0.4;
+    public static long DRIVE_MS = 1000;
 
     private Robot robot;
-    private Alliance alliance = Alliance.BLUE;
-    private final LoopTimer loopTimer = new LoopTimer();
 
     @Override
     public void initialize() {
         telemetry = TelemetryUtil.withPanels(telemetry);
         reset();
         robot = new Robot(hardwareMap);
-    }
 
-    @Override
-    public void initialize_loop() {
-        if (gamepad1.x) alliance = Alliance.BLUE;
-        if (gamepad1.b) alliance = Alliance.RED;
-        telemetry.addData("Alliance", "%s   (X = bleu, B = rouge)", alliance);
-        telemetry.update();
-    }
-
-    @Override
-    public void preRun() {
-        PoseFactory p = alliance.poses();
-        // TODO positions BIOBUZZ, côté bleu, en pouces et en degrés
-        Pose start = p.of(9, 111, -90);
-        Pose score = p.of(16, 128, -45);
-        Pose park = p.of(68, 96, -90);
-
-        robot.drivetrain.setAlliance(alliance);
-        robot.drivetrain.setPose(start);
-
-        Command scoring = new SequentialCommandGroup(
-                follow(line(start, score).linear(start, score)),
-                new InstantCommand(robot.intake::eject, robot.intake),
-                new WaitCommand(500),
-                new InstantCommand(robot.intake::stop, robot.intake)
-        ).withTimeout(SCORING_TIMEOUT_MS);
-
-        // Le parking part de la position réelle, puisque le timeout peut couper la séquence n'importe où
         schedule(new SequentialCommandGroup(
-                scoring,
-                new InstantCommand(robot.intake::stop, robot.intake),
-                new DeferredCommand(() -> {
-                    Pose here = robot.drivetrain.pose();
-                    return new FollowPathCommand(robot.drivetrain.follower, line(here, park).linear(here, park), false);
-                }, null)
+                new InstantCommand(() -> robot.drive.drive(DRIVE_POWER, 0, 0, false), robot.drive),
+                new WaitCommand(DRIVE_MS),
+                new InstantCommand(robot.drive::stop, robot.drive)
         ));
-    }
-
-    @Override
-    public void run() {
-        super.run();
-        // À chaque boucle, pour que le TeleOp reprenne la bonne position même si l'Auto est arrêté avant la fin
-        MatchState.save(alliance, robot.drivetrain.pose());
-
-        loopTimer.tick();
-        telemetry.addData("Alliance", alliance);
-        telemetry.addData("Boucle", "%.0f Hz", loopTimer.hz());
-        telemetry.addData("Pose", robot.drivetrain.pose());
-        telemetry.update();
-    }
-
-    private Command follow(Path path) {
-        return new FollowPathCommand(robot.drivetrain.follower, path).withTimeout(PATH_TIMEOUT_MS);
     }
 }

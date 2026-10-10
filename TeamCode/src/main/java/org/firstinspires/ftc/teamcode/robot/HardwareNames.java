@@ -17,7 +17,6 @@ public final class HardwareNames {
     // Odométrie
     public static final String PINPOINT = "pinpoint";
 
-    // Mécanismes
-    public static final String INTAKE = "intake";
+    // Mécanisme : servo de la barre d'intake
     public static final String BAR = "bar";
 }
