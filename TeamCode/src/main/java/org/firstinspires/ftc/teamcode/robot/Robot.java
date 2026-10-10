@@ -4,6 +4,7 @@ import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 
+import org.firstinspires.ftc.teamcode.subsystems.Bar;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
@@ -16,6 +17,7 @@ public class Robot {
     public final BatteryVoltage battery;
     public final Drivetrain drivetrain;
     public final Intake intake;
+    public final Bar bar;
 
     public Robot(HardwareMap hardwareMap) {
         // Bulk reads : une seule lecture groupée par hub et par boucle, le cache est vidé
@@ -25,7 +27,8 @@ public class Robot {
         battery = new BatteryVoltage(hardwareMap);
         drivetrain = new Drivetrain(hardwareMap);
         intake = new Intake(hardwareMap, battery);
+        bar = new Bar(hardwareMap);
 
-        CommandScheduler.getInstance().registerSubsystem(drivetrain, intake);
+        CommandScheduler.getInstance().registerSubsystem(drivetrain, intake, bar);
     }
 }

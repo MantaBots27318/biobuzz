@@ -19,4 +19,5 @@ public final class HardwareNames {
 
     // Mécanismes
     public static final String INTAKE = "intake";
+    public static final String BAR = "bar";
 }

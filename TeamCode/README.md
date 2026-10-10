@@ -15,7 +15,7 @@ teamcode/
 ├── opmodes/
 │   ├── teleop/MainTeleOp     « A. TeleOp », le TeleOp de match
 │   ├── auto/MainAuto         « A. Auto », un seul Auto, alliance choisie pendant l'init (X = bleu, B = rouge)
-│   └── test/                 SystemCheck (check d'avant-match), SlothTest…
+│   └── test/                 SystemCheck (check d'avant-match), DriveTest (rouler sans Pedro), SlothTest…
 ├── subsystems/               1 classe = 1 mécanisme (Drivetrain, Intake…)
 ├── robot/
 │   ├── Robot                 crée tous les subsystems, active les bulk reads
@@ -67,12 +67,13 @@ et vérifier qu'il est bien branché.
 
 | Nom (config)  | Type              | Hub              | Port |
 |---------------|-------------------|------------------|------|
-| `frontLeft`   | Moteur            | Control Hub      | ?    |
-| `frontRight`  | Moteur            | Control Hub      | ?    |
-| `backLeft`    | Moteur            | Control Hub      | ?    |
-| `backRight`   | Moteur            | Control Hub      | ?    |
+| `frontLeft`   | Moteur            | Control Hub      | 0    |
+| `backLeft`    | Moteur            | Control Hub      | 1    |
+| `backRight`   | Moteur            | Control Hub      | 2    |
+| `frontRight`  | Moteur            | Control Hub      | 3    |
 | `pinpoint`    | goBILDA Pinpoint  | Control Hub I2C  | ?    |
 | `intake`      | Moteur            | Expansion Hub    | ?    |
+| `bar`         | Servo             | Control Hub      | 5    |
 
 ## Responsables
 
