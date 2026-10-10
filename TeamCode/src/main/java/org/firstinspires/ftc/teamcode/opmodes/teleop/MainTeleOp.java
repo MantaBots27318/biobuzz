@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.util.Alliance;
 import org.firstinspires.ftc.teamcode.util.LoopTimer;
 import org.firstinspires.ftc.teamcode.util.MatchState;
+import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 // Le préfixe « A. » fait apparaître l'OpMode en tête de liste sur le Driver Hub
 @TeleOp(name = "A. TeleOp", group = "Match")
@@ -21,6 +22,7 @@ public class MainTeleOp extends CommandOpMode {
 
     @Override
     public void initialize() {
+        telemetry = TelemetryUtil.withPanels(telemetry);
         reset();
         robot = new Robot(hardwareMap);
 

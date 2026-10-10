@@ -97,8 +97,10 @@ Tant que le Foresight Tuner n'a pas été fait, le TeleOp et l'Auto refusent de 
 
 ## Panels et Sloth
 
-- **Panels** (réglage en direct et télémétrie) : se connecter au Wi-Fi du robot et ouvrir l'interface Panels
-  dans le navigateur. Les valeurs changées dans Panels sont perdues au prochain déploiement : recopier
+- **Panels** (réglage en direct et télémétrie) : se connecter au Wi-Fi du robot et ouvrir
+  `http://192.168.43.1:8001` dans le navigateur. Panels n'affiche que la télémétrie qu'on lui envoie : chaque
+  OpMode commence son init par `telemetry = TelemetryUtil.withPanels(telemetry);`, qui envoie chaque ligne au
+  Driver Hub et à Panels. Les valeurs changées dans Panels sont perdues au prochain déploiement : recopier
   dans le code celles qu'on garde.
 - **Sloth** (rechargement à chaud) : après une installation complète, la tâche `deploySloth` (VS Code :
   **FTC: Hot Reload (Sloth)**) envoie seulement le code `teamcode` en une ou deux secondes. Attendre la fin

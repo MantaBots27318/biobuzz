@@ -122,6 +122,21 @@ Use the full install (`Cmd+Shift+B`) instead after changing a library or a `buil
 
 If you don't run a device yourself, the Sloth tasks connect adb to `192.168.43.1` and then disconnect every network adb device when they finish.
 
+**Shortcut for hot reload (optional).** VS Code has no default shortcut for a task other than the build task, so each person adds one to their own VS Code settings (this file is personal, not part of the repo):
+
+1. Open the Command Palette (`Cmd+Shift+P` / `Ctrl+Shift+P`) and choose **Preferences: Open Keyboard Shortcuts (JSON)**.
+2. Add this entry between the square brackets `[ ]` (with a comma if there are other entries):
+
+```json
+{
+    "key": "ctrl+alt+d",
+    "command": "workbench.action.tasks.runTask",
+    "args": "FTC: Hot Reload (Sloth)"
+}
+```
+
+`Ctrl+Alt+D` (`Control+Option+D` on macOS, `D` for deploySloth) is free in VS Code on macOS and Windows. Avoid `Cmd+Shift+D` (Run and Debug), `Cmd+Shift+S` (Save As) and `Cmd+Shift+Q` (macOS log out). The `"args"` value must match the task name in `.vscode/tasks.json` exactly. If an extension already uses the shortcut, the Keyboard Shortcuts editor shows it: search for the key there and pick another.
+
 ## Tasks
 
 | Task | What it does |
@@ -143,6 +158,7 @@ On Windows and Linux, use `Ctrl` where the table says `Cmd`.
 | Shortcut (macOS) | Windows / Linux | What it does |
 |---|---|---|
 | `Cmd+Shift+B` | `Ctrl+Shift+B` | Run the default build task (**FTC: Build and Install (Deploy)**) |
+| `Ctrl+Option+D` | `Ctrl+Alt+D` | Hot reload with Sloth (**FTC: Hot Reload (Sloth)**), once you've added the shortcut above |
 | `Cmd+Shift+P` | `Ctrl+Shift+P` | Command Palette. Type "Tasks: Run Task" to run any FTC task |
 | `Ctrl+Backtick` | `Ctrl+Backtick` | Show or hide the integrated terminal (the backtick key is above Tab) |
 | `Cmd+Shift+X` | `Ctrl+Shift+X` | Open the Extensions view |
