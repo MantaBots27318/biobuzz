@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 
 import org.firstinspires.ftc.teamcode.subsystems.Bar;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.RobotCentricDrive;
 
 /**
@@ -16,6 +17,7 @@ public class Robot {
     public final BatteryVoltage battery;
     public final RobotCentricDrive drive;
     public final Bar bar;
+    public final Intake intake;
 
     public Robot(HardwareMap hardwareMap) {
         // Bulk reads : une seule lecture groupée par hub et par boucle, le cache est vidé
@@ -25,7 +27,8 @@ public class Robot {
         battery = new BatteryVoltage(hardwareMap);
         drive = new RobotCentricDrive(hardwareMap);
         bar = new Bar(hardwareMap);
+        intake = new Intake(hardwareMap, battery);
 
-        CommandScheduler.getInstance().registerSubsystem(drive, bar);
+        CommandScheduler.getInstance().registerSubsystem(drive, bar, intake);
     }
 }

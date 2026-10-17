@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
  *
  * Manette 1 : stick gauche = avancer / translater, stick droit (gauche-droite) = tourner,
  * gâchette haute droite maintenue = mode lent, A = barre en position active, B = barre au repos,
- * Y = alterner entre les deux.
+ * Y = alterner entre les deux. Manette 2 : X = intake marche / arrêt.
  */
 // Le préfixe « A. » fait apparaître l'OpMode en tête de liste sur le Driver Hub
 @TeleOp(name = "A. TeleOp", group = "Match")
@@ -36,6 +36,11 @@ public class MainTeleOp extends CommandOpMode {
                 .whenPressed(new InstantCommand(robot.bar::rest, robot.bar));
         driver.getGamepadButton(GamepadKeys.Button.Y)
                 .whenPressed(new InstantCommand(robot.bar::toggle, robot.bar));
+
+        // Operator: X turns the intake on and off
+        GamepadEx operator = new GamepadEx(gamepad2);
+        operator.getGamepadButton(GamepadKeys.Button.X)
+                .whenPressed(new InstantCommand(robot.intake::toggle, robot.intake));
     }
 
     @Override
@@ -50,6 +55,7 @@ public class MainTeleOp extends CommandOpMode {
         telemetry.addData("Batterie", "%.1f V", robot.battery.volts());
         telemetry.addData("Mode", gamepad1.right_bumper ? "lent" : "normal");
         telemetry.addData("Barre", robot.bar.isActive() ? "active" : "repos");
+        telemetry.addData("Intake", robot.intake.isRunning() ? "on" : "off");
         telemetry.update();
     }
 }

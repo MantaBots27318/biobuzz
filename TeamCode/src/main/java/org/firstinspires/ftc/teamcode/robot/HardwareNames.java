@@ -19,4 +19,7 @@ public final class HardwareNames {
 
     // Mécanisme : servo de la barre d'intake
     public static final String BAR = "bar";
+
+    // Mécanisme : moteur de l'intake (avec encodeur)
+    public static final String INTAKE = "intake";
 }
