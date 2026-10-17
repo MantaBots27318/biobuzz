@@ -21,29 +21,32 @@ import org.firstinspires.ftc.teamcode.robot.HardwareNames;
  * Each tuner prints the Java code to paste here.
  */
 public class Constants {
-    public static MecanumConfig drivetrainConfig = new MecanumConfig(c -> {
-        c.frontLeftName.set(HardwareNames.FRONT_LEFT);
-        c.frontRightName.set(HardwareNames.FRONT_RIGHT);
-        c.backLeftName.set(HardwareNames.BACK_LEFT);
-        c.backRightName.set(HardwareNames.BACK_RIGHT);
-
-        // TODO Mecanum Tuner: motor directions
-        c.frontLeftDirection.set(DcMotorSimple.Direction.REVERSE);
-        c.frontRightDirection.set(DcMotorSimple.Direction.FORWARD);
-        c.backLeftDirection.set(DcMotorSimple.Direction.REVERSE);
+    public static MecanumConfig drivetrainConfig = new MecanumConfig(
+        c -> {
+        c.frontLeftName.set("frontLeft");
+        c.frontRightName.set("frontRight");
+        c.backLeftName.set("backLeft");
+        c.backRightName.set("backRight");
+        c.frontLeftDirection.set(DcMotorSimple.Direction.FORWARD);
+        c.frontRightDirection.set(DcMotorSimple.Direction.REVERSE);
+        c.backLeftDirection.set(DcMotorSimple.Direction.FORWARD);
         c.backRightDirection.set(DcMotorSimple.Direction.FORWARD);
-    });
+        c.manualBrakeMode.set(true);
+    }
+    );
 
-    public static PinpointConfig localizerConfig = new PinpointConfig(c -> {
+    public static PinpointConfig localizerConfig = new PinpointConfig(
+        c -> {
         c.name.set(HardwareNames.PINPOINT);
-        c.podType.set(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-
-        // TODO Pinpoint Tuner: odometry pod offsets and directions (inches)
-        c.xPodOffset.set(0.0);
-        c.yPodOffset.set(0.0);
-        c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
-        c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
-    });
+            c.podType.set(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+            c.xPodOffset.set(1.679826871616634);
+            c.yPodOffset.set(-6.6598708986297375);
+            c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+            c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.REVERSED);
+            c.globalDistanceUnit.set(DistanceUnit.INCH);
+            c.offsetUnits.set(DistanceUnit.INCH);
+    }
+    );
 
     // TODO Foresight Tuner: paste the generated values here. While this is empty,
     // createFollower() refuses to start with a clear message.
