@@ -27,7 +27,7 @@ public class Drivetrain extends SubsystemBase {
     private Alliance alliance = Alliance.BLUE;
 
     public Drivetrain(HardwareMap hardwareMap) {
-        follower = Constants.createFollower(hardwareMap);
+        follower = Constants.create(hardwareMap);
     }
 
     @Override

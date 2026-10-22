@@ -2,7 +2,10 @@ package org.firstinspires.ftc.teamcode.pedro;
 
 import com.pedropathing.algorithm.Foresight;
 import com.pedropathing.algorithm.ForesightConfig;
+import com.pedropathing.controllers.Controller;
 import com.pedropathing.follower.Follower;
+import com.pedropathing.math.Matrix;
+import com.pedropathing.math.Vector2D;
 import com.pedropathing.revhub.drivetrains.Mecanum;
 import com.pedropathing.revhub.drivetrains.MecanumConfig;
 import com.pedropathing.revhub.localizers.PinpointConfig;
@@ -11,6 +14,7 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.robot.HardwareNames;
 
 /**
@@ -50,20 +54,37 @@ public class Constants {
 
     // TODO Foresight Tuner: paste the generated values here. While this is empty,
     // createFollower() refuses to start with a clear message.
-    public static ForesightConfig foresightConfig = new ForesightConfig(c -> {
-    });
+    public static ForesightConfig foresightConfig = new ForesightConfig(
+            c -> {
+                Controller primaryTranslationalForward = Controller.proportional(0.5169044181552397);
+                Controller secondaryTranslationalForward = Controller.proportional(0.19098237056792983);
+                Controller primaryTranslationalLateral = Controller.proportional(1.087793988186525);
+                Controller secondaryTranslationalLateral = Controller.proportional(0.40191081224423325);
 
-    public static Follower createFollower(HardwareMap hardwareMap) {
-        Foresight foresight;
-        try {
-            foresight = new Foresight(foresightConfig);
-        } catch (IllegalStateException e) {
-            throw new IllegalStateException("Pedro is not tuned yet: run the Foresight Tuner "
-                    + "and paste its values into pedro/Constants.java", e);
-        }
+                c.forwardTranslational.set(Controller.piecewise(secondaryTranslationalForward).put(2.5, primaryTranslationalForward));
+                c.strafeTranslational.set(Controller.piecewise(secondaryTranslationalLateral).put(2.5, primaryTranslationalLateral));
+
+                c.coast.set(Controller.proportionalFeedforward(0.014621493601193204));
+                c.brake.set(Controller.proportionalFeedforward(0.012428269561014223));
+
+                c.headingFeedback.set(Controller.proportional(8.90471989630108));
+                c.headingBrakeCoefficients.set(Vector2D.cartesian(0.06186783688885615, 0.0049578755074748335));
+
+                c.linearBrakeCoefficients.set(Matrix.diag(0.15520802958547872, 0.04328746378182151));
+                c.quadraticBrakeCoefficients.set(Matrix.diag(5.253095574323881E-4, 0.0023124715121728085));
+
+                c.maxAchievableForwardVelocity.set(65.08830440213332);
+                c.maxAchievableStrafeVelocity.set(48.278370286503716);
+                c.naturalForwardDeceleration.set(30.06725111930359);
+                c.naturalStrafeDeceleration.set(75.61174988984254);
+            }
+    );
+
+    public static Follower create(HardwareMap h) {
         return new Follower(
-                new PinpointLocalizer(hardwareMap, localizerConfig),
-                new Mecanum(hardwareMap, drivetrainConfig),
-                foresight);
+                new PinpointLocalizer(h, localizerConfig),
+                new Mecanum(h, drivetrainConfig),
+                new Foresight(foresightConfig)
+        );
     }
 }
