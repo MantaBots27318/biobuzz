@@ -19,7 +19,7 @@ public class RobotCentricDrive extends SubsystemBase {
     public static double SLOW_MODE_SCALE = 0.35;
 
     // Sens des moteurs, lus à la création : vérifier roue par roue avec System Check
-    public static boolean FRONT_LEFT_REVERSED = true;
+    public static boolean FRONT_LEFT_REVERSED = false;
     public static boolean BACK_LEFT_REVERSED = true;
     public static boolean FRONT_RIGHT_REVERSED = false;
     public static boolean BACK_RIGHT_REVERSED = false;

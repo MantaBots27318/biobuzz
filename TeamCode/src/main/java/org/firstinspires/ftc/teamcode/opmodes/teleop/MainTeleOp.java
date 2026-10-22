@@ -30,17 +30,13 @@ public class MainTeleOp extends CommandOpMode {
         robot = new Robot(hardwareMap);
 
         GamepadEx driver = new GamepadEx(gamepad1);
-        driver.getGamepadButton(GamepadKeys.Button.A)
-                .whenPressed(new InstantCommand(robot.bar::activate, robot.bar));
-        driver.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new InstantCommand(robot.bar::rest, robot.bar));
         driver.getGamepadButton(GamepadKeys.Button.Y)
                 .whenPressed(new InstantCommand(robot.bar::toggle, robot.bar));
-
-        // Operator: X turns the intake on and off
-        GamepadEx operator = new GamepadEx(gamepad2);
-        operator.getGamepadButton(GamepadKeys.Button.X)
-                .whenPressed(new InstantCommand(robot.intake::toggle, robot.intake));
+        // Pressing the button of the direction already running stops the intake
+        driver.getGamepadButton(GamepadKeys.Button.X)
+                .whenPressed(new InstantCommand(robot.intake::toggleForward, robot.intake));
+        driver.getGamepadButton(GamepadKeys.Button.A)
+                .whenPressed(new InstantCommand(robot.intake::toggleReverse, robot.intake));
     }
 
     @Override
@@ -55,7 +51,7 @@ public class MainTeleOp extends CommandOpMode {
         telemetry.addData("Batterie", "%.1f V", robot.battery.volts());
         telemetry.addData("Mode", gamepad1.right_bumper ? "lent" : "normal");
         telemetry.addData("Barre", robot.bar.isActive() ? "active" : "repos");
-        telemetry.addData("Intake", robot.intake.isRunning() ? "on" : "off");
+        telemetry.addData("Intake", robot.intake.directionName());
         telemetry.update();
     }
 }
