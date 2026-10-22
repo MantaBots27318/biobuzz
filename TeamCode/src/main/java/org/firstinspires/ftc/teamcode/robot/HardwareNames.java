@@ -19,4 +19,6 @@ public final class HardwareNames {
 
     // Mechanisms
     public static final String INTAKE = "intake";
+    public static final String OUTTAKE_LEFT = "outtakeLeft";
+    public static final String OUTTAKE_RIGHT = "outtakeRight";
 }

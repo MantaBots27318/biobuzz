@@ -6,6 +6,7 @@ import com.seattlesolvers.solverslib.command.CommandScheduler;
 
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Outtake;
 
 /**
  * The whole robot: creates every subsystem once, shared by the TeleOp and the Auto.
@@ -16,6 +17,7 @@ public class Robot {
     public final BatteryVoltage battery;
     public final Drivetrain drivetrain;
     public final Intake intake;
+    public final Outtake outtake;
 
     public Robot(HardwareMap hardwareMap) {
         // Bulk reads: one grouped read per hub per loop; the CommandScheduler clears the cache
@@ -25,7 +27,8 @@ public class Robot {
         battery = new BatteryVoltage(hardwareMap);
         drivetrain = new Drivetrain(hardwareMap);
         intake = new Intake(hardwareMap, battery);
+        outtake = new Outtake(hardwareMap);
 
-        CommandScheduler.getInstance().registerSubsystem(drivetrain, intake);
+        CommandScheduler.getInstance().registerSubsystem(drivetrain, intake, outtake);
     }
 }

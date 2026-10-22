@@ -87,6 +87,8 @@ Keep this up to date with every configuration change on the Driver Hub.
 | `backRight`   | Motor             | Control Hub      | ?    |
 | `pinpoint`    | goBILDA Pinpoint  | Control Hub I2C  | ?    |
 | `intake`      | Motor             | Expansion Hub    | ?    |
+| `outtakeLeft` | Motor (goBILDA 1150 RPM, encoder) | Control Hub      | 0    |
+| `outtakeRight`| Motor (goBILDA 1150 RPM, encoder) | Control Hub      | 1    |
 
 ## Owners
 
