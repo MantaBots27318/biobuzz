@@ -96,6 +96,21 @@ robot. Margin and "how long is stable" are settings to tune in Panels.
   our HIVE. The opponent's HIVE may tip at any moment (they shoot into it), so the "stable" check
   matters even more for it. How much it helps is to be seen in testing.
 
+- **2026-11-01: Piece 1 is tested with a new test OpMode "Vision Test"** (group "Test"). It shows every
+  tag in view (ID, distance, angle) and moves nothing.
+
+- **2026-11-01: The Limelight is already set up** (plugged in, running an AprilTag pipeline). But the
+  pipeline is from last season, so its tag size and family must be checked for BIOBUZZ (36h11, 3.25 in.)
+  before trusting any distance. Wrong size = wrong distances.
+- **2026-11-01: 45º is the best angle for seeing the tags** (found by the team while testing; to be
+  confirmed whether this is the camera's tilt). Use it as the starting point for the mounting.
+
+- **2026-11-01: The Limelight's configuration name is `limelight`.**
+- **2026-11-01: "Vision Test" creates only `Vision`, not the whole `Robot`**, so it runs on any robot that
+  has a `limelight` in its configuration (tested on last year's robot).
+- **2026-11-01: The Limelight pipeline's Marker Size must be 82.55 mm** (3.25 in.). Last year's 165.1 mm
+  doubled every distance.
+
 ## Mixing Pinpoint and tags (decided 2026-11-01)
 
 The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't drift. So:
@@ -113,6 +128,8 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 
 1. **Limelight reads tags:** a `Vision` subsystem that reads the tags and shows them in telemetry.
    Test: point it at the practice HIVE, check the IDs and distances.
+   **Done 2026-11-01**, tested on last year's robot: IDs and distances right once the Limelight's
+   Marker Size was set to 82.55 mm (3.25 in.).
 2. **Tag positions:** both positions of every cluster, from the CAD model, checked on the practice HIVE.
 3. **HIVE state:** each HIVE tracked as position A, position B or tipping. Test: tip the practice HIVE
    by hand and watch the telemetry.
@@ -123,7 +140,7 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 ## Open questions
 
 - Confirm the "telling when a HIVE has finished tipping" idea above once we see real readings.
-- Where and at what angle to mount the Limelight (it must look up at the tags).
+- Where to mount the Limelight (it must look up at the tags). Angle: start at 45º (see Decisions).
 
 ## Set aside
 

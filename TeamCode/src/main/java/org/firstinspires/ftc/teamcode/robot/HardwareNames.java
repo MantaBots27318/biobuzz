@@ -17,6 +17,9 @@ public final class HardwareNames {
     // Odometry
     public static final String PINPOINT = "pinpoint";
 
+    // Vision
+    public static final String LIMELIGHT = "limelight";
+
     // Mechanisms
     public static final String INTAKE = "intake";
 }
