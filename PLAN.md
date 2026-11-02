@@ -111,6 +111,99 @@ robot. Margin and "how long is stable" are settings to tune in Panels.
 - **2026-11-01: The Limelight pipeline's Marker Size must be 82.55 mm** (3.25 in.). Last year's 165.1 mm
   doubled every distance.
 
+- **2026-11-01: Piece 2 takes the tag positions from the official CAD only, for now.** The team
+  (the user) reads the numbers off the CAD; Claude can't open it. The check on the practice HIVE with a
+  tape measure is postponed (not dropped): do it once the numbers are in, or in piece 3.
+  The CAD has a +/- 1 in. tolerance (manual 9.1), so the real field may differ by about that much.
+
+- **2026-11-01 (finding): Pedro fixes the grid, not the physical corner.** Pedro docs: field 144 x 144 in.,
+  (0, 0) at the bottom-left, +x right, +y up, heading 0 = facing right, not tied to an alliance. Which
+  real corner that is stays our choice. Reference: Cuttlefish (6165) BIOBUZZ repo, `BioBuzzField.java`,
+  uses (0, 0) at the corner of the audience wall and the red wall (red half x < 72, blue half x > 72,
+  audience side = small y). The manual (section 9, p. 67 area) says the red ALLIANCE AREA is on the left
+  as seen from the primary audience. Their file also lists HIVE dimensions from the official CAD
+  (HIVE rails 22.75 / 24.733 in. from the center, pivot 12.75 in. from the center line, CELL centre
+  13.37 in. from the pivot in plan, bar tilted 30 deg), useful to cross-check piece 2. Our DECODE repo
+  (MantaBots27318/decode) has no team code, so nothing to reuse from it.
+- **2026-11-01: Field coordinates (Pedro) = (0, 0) at the corner where the audience wall meets the red
+  wall**, seen from the primary audience: **+x toward the blue wall, +y away from the audience, heading
+  0 = facing the blue wall**, counter-clockwise positive, heights up from the tiles. Red half x < 72,
+  blue half x > 72. Consequence to check on the field: a red robot driving away from its drivers faces
+  0 deg, so `Drivetrain.RED_DRIVER_FORWARD_DEG = 0` (its current value) and blue = 180.
+
+- **2026-11-01: First CAD reading (Onshape Measure, user's screenshot).** Face "am-5888-blue2: Blue ..."
+  (the sticker face on the blue HIVE's far-side cell, HIVE state to confirm) measured against the corner
+  vertex of the field (audience/red corner, where our (0, 0) is). Closest to farthest point of the face,
+  in inches from the corner: x 74.859 to 91.684, y 81.278 to 85.504, z 48.439 to 50.879. Rough center:
+  (83.3, 83.4, 49.7). Still missing: the tilt (angle to the tiles), the other 3 cases, and whether z = 0
+  is the top of the tiles.
+- **2026-11-01: Second CAD reading (sticker face vs. a tile's top face).** Angle = 30.000 deg. Lowest
+  point of the face is 48.412 in. above the tile top (the corner vertex was 0.03 in. lower, so z = 0 is
+  the tile top for our purposes). Highest point 50.896 in. Together with the first reading: the lowest
+  edge of the face is the one nearer the field center (y 81.3, z 48.4), the highest the far edge
+  (y 85.5, z 50.9), so the face rises toward the far wall at 30 deg. Facing direction (down, toward the
+  tiles) = (0, +0.5, -0.866); sticker "up" (bottom edge toward the center) = (0, +0.866, +0.5).
+  This is the blue far-side cluster (tags 42-45) with its CELL up.
+  Proposal (not yet confirmed): get the other 3 cases by geometry (pivot axis 43.95 in. high at y = 72,
+  the other CELL is the mirror image across the pivot, the other stable position is the bar tilted the
+  other way by 30 deg), then check them with the "Tag Map Check" on the practice HIVE.
+- **2026-11-01: Third CAD reading (pivot part "am-5881" vs the corner tile, from the top view).**
+  Pivot axis height = 43.950 in. above the tile top (matches the manual). Position of the pivot part
+  from the corner: x about 83.3 to 83.7, y about 70.7 to 70.8 (the Measure tool gives the closest and
+  farthest points, so +/- 0.2 in.). So the blue HIVE's pivot is at about x 83.5, y 70.8 (not exactly
+  the field center line y = 72). The sticker's x (83.3) agrees with the pivot's x. Use these in place
+  of the "y = 72" assumption above.
+  **Correction (same day, user): the pivot is supposed to be at y = 72.** The manual says the HIVE
+  structure is in the center of the FIELD, and the FIELD is the area inside the perimeter walls. All
+  three CAD readings came out 1.2 to 1.5 in. too small in x and y (pivot y 70.8, sticker x 83.3 against
+  about 84.75 expected), so the reference vertex we measured from is probably about 1.2 in. inside the
+  true corner. Fix: use readings relative to the pivot (the offset cancels out) and put the pivot at
+  (84.75, 72, 43.95) for the blue HIVE. Relative to the pivot, the measured sticker center is
+  (-0.2, +12.6, +5.7), which gives about (84.5, 84.6, 49.7) on the field. The x = 84.75 comes from the
+  Cuttlefish repo (HIVE pivots 12.75 in. each side of the center line), not from the manual: to
+  confirm by measuring the pivot from the inside corner of the perimeter walls.
+- **2026-11-01: Fourth CAD reading (pivot part vs a vertex of the left side wall, "am-2499-Side").**
+  Pivot part is 82.911 to 83.773 in. from the vertex in x (so about 83.3 to 83.8), 3.5 in. from it in y
+  (the vertex's own y is unknown), and 43.95 in. high (axis height, matches the manual again).
+  This agrees with the first pivot reading in x (83.3 to 83.7) from a different reference, so there is
+  NO x offset between our two reference vertices, and the "about 1.2 in. shifted" explanation above is
+  withdrawn for x. The blue pivot's x is therefore about 83.4 (11.4 in. from the center line), not the
+  84.75 taken from the Cuttlefish repo. y is still unsettled (70.8 from the first reading, 72 from the
+  manual): next step is to measure the pivot against the field's center marker.
+- **2026-11-01: Fifth CAD reading (pivot part vs the field's center marker). This settles the pivot.**
+  Difference in y = 0.000, in x = 12.326 to 13.188 (about 12.76), height 43.950. So the blue pivot is
+  12.76 in. to the blue side of the center line and exactly on it in y: **blue pivot = (84.75, 72, 43.95)**,
+  matching the Cuttlefish repo. **The "about 1.2 in. shifted" explanation was right after all**; I withdrew
+  it too early because the two wall/tile vertices we measured from sit on the same inner plane and
+  share the same offset (the readings from them were all 1.2 to 1.5 in. too small). Sticker center
+  from the pivot: (-0.2, +12.6, +5.7), so about **(84.55, 84.6, 49.7)** on the field.
+
+- **2026-11-01: Piece 2 includes a "Tag Map Check" test OpMode** (group "Test"). You type where the
+  camera is (position, direction, tilt) in Panels and say which CELL of each HIVE is up; for each tag
+  the Limelight sees, it shows the measured distance and angles next to the ones the list predicts.
+  It does not compute the robot's position (that is piece 4).
+- **2026-11-01: The other 3 cases are computed by geometry** from the one measured sticker and the
+  pivot (no more CAD measuring needed unless the check shows a mismatch).
+- **2026-11-01: A HIVE state is "which of its 2 CELLS is up"** (FAR or AUDIENCE, seen from the audience).
+
+- **2026-11-01: The map works with flat distances (as seen from above).** The Limelight gives the
+  straight-line distance (it includes the height difference). The robot drives on the floor.
+- **2026-11-01 (user): no camera tilt setting.** The camera tilt (45 deg is only a concept while the
+  Limelight is held by hand) is not needed: the tags' own tilt is known (30 deg, from the CAD and the
+  HIVE state), so the camera's direction can be worked out from how each tag appears to it. The Limelight
+  also reports each tag's angle relative to the camera. So per tag: the camera's position on the field
+  (x, y, height) is computed from the tag's known pose on the map and the reading, and the flat
+  distance comes out of that. Risk to watch: a single tag's angle reading can be noisy (especially far
+  away); the Tag Map Check shows how good it is. Replaces the earlier "tilt setting" idea.
+
+- **2026-11-01: The user is away from HQ for about a week (until around 2026-11-08), so nothing can be
+  tested on the robot.** Keep building what can be checked by compiling and by calculation; test and
+  tune everything together when back. Tuning of the tag map is for later.
+- **2026-11-01 (provisional, to confirm): the short way for aiming.** Aim with the Pinpoint position and the
+  known HIVE center, then fine-tune with the Limelight's left-right angle to the tag (no map needed).
+  "HIVE is down" = tag seen and low enough (one number to calibrate on the practice HIVE). The tag-based
+  position correction (piece 4) is postponed. Raised by the user: "we did not do this in past years".
+
 ## Mixing Pinpoint and tags (decided 2026-11-01)
 
 The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't drift. So:
@@ -125,6 +218,8 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 - Not a PID: a PID controls a motor toward a target. Here we are mixing two measurements.
 
 ## Pieces (order confirmed 2026-11-01)
+
+(2026-11-01: piece 2 is built and committed as a placeholder, untested; its values get tuned at HQ.)
 
 1. **Limelight reads tags:** a `Vision` subsystem that reads the tags and shows them in telemetry.
    Test: point it at the practice HIVE, check the IDs and distances.
@@ -144,4 +239,6 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 
 ## Set aside
 
-(nothing yet)
+- **Position correction from tags (piece 4), postponed 2026-11-01.** Why: it needs the full tag map and a
+  lot of tuning, and the user is away from the robot for a week. The tag map (piece 2) is built and kept
+  (`vision/TagMap.java`, "Tag Map Check") but untested. It may come back if the Pinpoint drifts too much.

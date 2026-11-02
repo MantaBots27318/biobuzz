@@ -7,6 +7,7 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.robot.HardwareNames;
@@ -29,12 +30,17 @@ public class Vision extends SubsystemBase {
         public final double xIn, yIn, zIn;
         public final double distanceIn;
         public final double bearingDeg;
+        // How the tag is turned relative to the camera: rotations about the camera's x, y and z axes
+        public final double rollDeg, pitchDeg, yawDeg;
 
-        Tag(int id, double xIn, double yIn, double zIn) {
+        Tag(int id, double xIn, double yIn, double zIn, double rollDeg, double pitchDeg, double yawDeg) {
             this.id = id;
             this.xIn = xIn;
             this.yIn = yIn;
             this.zIn = zIn;
+            this.rollDeg = rollDeg;
+            this.pitchDeg = pitchDeg;
+            this.yawDeg = yawDeg;
             this.distanceIn = Math.sqrt(xIn * xIn + yIn * yIn + zIn * zIn);
             // Positive = the tag is to the right of the camera's axis
             this.bearingDeg = Math.toDegrees(Math.atan2(xIn, zIn));
@@ -74,10 +80,14 @@ public class Vision extends SubsystemBase {
         List<Tag> list = new ArrayList<>();
         for (LLResultTypes.FiducialResult f : result.getFiducialResults()) {
             Pose3D p = f.getTargetPoseCameraSpace();
+            double toIn = toInches(p.getPosition().unit);
             list.add(new Tag(f.getFiducialId(),
-                    p.getPosition().x * toInches(p.getPosition().unit),
-                    p.getPosition().y * toInches(p.getPosition().unit),
-                    p.getPosition().z * toInches(p.getPosition().unit)));
+                    p.getPosition().x * toIn,
+                    p.getPosition().y * toIn,
+                    p.getPosition().z * toIn,
+                    p.getOrientation().getRoll(AngleUnit.DEGREES),
+                    p.getOrientation().getPitch(AngleUnit.DEGREES),
+                    p.getOrientation().getYaw(AngleUnit.DEGREES)));
         }
         tags = list;
         ageMs = result.getStaleness();

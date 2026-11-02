@@ -98,14 +98,17 @@ teamcode/
 ├── opmodes/
 │   ├── teleop/MainTeleOp.java   "A. TeleOp": the match TeleOp
 │   ├── auto/MainAuto.java       "A. Auto": a single Auto for both alliances
-│   └── test/                    SystemCheck (pre-match check), SlothTest
+│   └── test/                    SystemCheck (pre-match check), SlothTest, VisionTest, TagMapCheck
 ├── subsystems/                  1 class = 1 mechanism
 │   ├── Drivetrain.java          drivetrain (holds the Pedro Follower)
-│   └── Intake.java              example mechanism, the template to copy
+│   ├── Intake.java              example mechanism, the template to copy
+│   └── Vision.java              the Limelight: AprilTags in view
 ├── robot/
 │   ├── Robot.java               creates and registers every subsystem, enables bulk reads
 │   ├── HardwareNames.java       ALL hardware configuration names
 │   └── BatteryVoltage.java      battery voltage (re-read every 500 ms) and compensation
+├── vision/
+│   └── TagMap.java              where each AprilTag is on the field + camera position from a tag
 ├── pedro/
 │   ├── Constants.java           Pedro settings (TODO values to fill in after AutoTune)
 │   ├── Tuning.java              registers the AutoTune procedures
