@@ -16,8 +16,8 @@ import java.util.List;
  */
 @Configurable
 public class Hives extends SubsystemBase {
-    // How the Limelight is mounted on the robot
-    public static double CAMERA_TILT_DEG = 30;
+    // How the Limelight is mounted: measured on the test setup, to redo on the final robot
+    public static double CAMERA_TILT_DEG = 28;
     public static double CAMERA_HEIGHT_IN = 14;
     // Tag centers are about 49.7 in. high when a CELL is up and 35.9 in. when it is down
     public static double UP_HEIGHT_THRESHOLD_IN = 43;

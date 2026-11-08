@@ -51,3 +51,10 @@
   (34.4 and 23.2 in. above the camera) against about 14 in. in the CAD, and the tag angles 25 to 27 deg
   against 30: a small camera tilt error is likely, so set the real tilt when the Limelight is mounted.
 - A "wrong state from the side" seen once could not be reproduced.
+- Limelight on the test setup, measured by the user 2026-11-08: tilt about 28 deg, height 14 in. Defaults in
+  `Hives` set to these. Both change on the final robot: measure again then.
+
+## Aim Test at HQ, 2026-11-08
+
+- User: "it works". Seen: when the camera sees tags that are not the target cell's, the robot does not turn
+  (by design). Recorded in BACKLOG.md as an idea.

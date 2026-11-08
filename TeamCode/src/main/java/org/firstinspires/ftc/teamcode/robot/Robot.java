@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.CommandScheduler;
 
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
+import org.firstinspires.ftc.teamcode.subsystems.HiveAim;
 import org.firstinspires.ftc.teamcode.subsystems.Hives;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
@@ -20,6 +21,7 @@ public class Robot {
     public final Intake intake;
     public final Vision vision;
     public final Hives hives;
+    public final HiveAim aim;
 
     public Robot(HardwareMap hardwareMap) {
         // Bulk reads: one grouped read per hub per loop; the CommandScheduler clears the cache
@@ -31,7 +33,8 @@ public class Robot {
         intake = new Intake(hardwareMap, battery);
         vision = new Vision(hardwareMap);
         hives = new Hives(vision);
+        aim = new HiveAim(vision, hives);
 
-        CommandScheduler.getInstance().registerSubsystem(drivetrain, intake, vision, hives);
+        CommandScheduler.getInstance().registerSubsystem(drivetrain, intake, vision, hives, aim);
     }
 }

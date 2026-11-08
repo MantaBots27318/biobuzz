@@ -55,6 +55,8 @@ public class MainTeleOp extends CommandOpMode {
     @Override
     public void preRun() {
         robot.drivetrain.setAlliance(alliance);
+        robot.aim.setAlliance(alliance);
+        robot.vision.start();
         if (poseFromAuto) {
             robot.drivetrain.setPose(MatchState.pose());
         } else {
@@ -66,13 +68,23 @@ public class MainTeleOp extends CommandOpMode {
     public void run() {
         // The gamepad axes are inverted relative to Pedro's frame, hence the minus signs.
         // Set the input before super.run() so follower.update() applies it in the same loop.
-        robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+        // Driver: while RIGHT_BUMPER is held and a tag of our HIVE is in view, the robot turns by itself to face it
+        boolean aiming = gamepad1.right_bumper && robot.aim.hasTarget();
+        double turn = aiming ? robot.aim.turnPower() : -gamepad1.right_stick_x;
+        robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, -gamepad1.left_stick_x, turn);
         super.run();
 
         loopTimer.tick();
         telemetry.addData("Loop", "%.0f Hz", loopTimer.hz());
         telemetry.addData("Battery", "%.1f V", robot.battery.volts());
         telemetry.addData("Pose", robot.drivetrain.pose());
+        telemetry.addData("Aim", "%s, error %.1f deg%s", robot.aim.getTargetName(), robot.aim.getErrorDeg(),
+                robot.aim.isAimed() ? " (aimed)" : "");
         telemetry.update();
+    }
+
+    @Override
+    public void end() {
+        robot.vision.stop();
     }
 }

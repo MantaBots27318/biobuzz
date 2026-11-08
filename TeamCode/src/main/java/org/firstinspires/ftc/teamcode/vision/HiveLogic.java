@@ -93,7 +93,7 @@ public final class HiveLogic {
                 : new Verdict(Raw.NONE, raw, "height threshold (one cell in view)");
     }
 
-    static double median(double[] values) {
+    public static double median(double[] values) {
         double[] sorted = Arrays.copyOf(values, values.length);
         Arrays.sort(sorted);
         int n = sorted.length;

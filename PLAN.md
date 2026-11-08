@@ -227,6 +227,18 @@ robot. Margin and "how long is stable" are settings to tune in Panels.
   Proposal for piece 3: when both cells of a HIVE are in view, the higher one is up (no mount
   measurement needed); the absolute height threshold stays as the fallback when only one is in view.
 
+- **2026-11-08 (user): TeleOp aim (piece 5) uses the Limelight only**, because it is locked in place on the
+  robot. The robot turns until the tags' left-right angle is 0. The Pinpoint position is NOT used for aiming
+  (a Pinpoint exists on the robot; the earlier "use both" decision of 2026-11-01 is replaced for now: the
+  position-based turn is set aside, not deleted).
+
+- **2026-11-08: Piece 5 is tested with a new "Aim Test" OpMode (drive motors, Pinpoint, Limelight only), plus the
+  RIGHT_BUMPER binding in "A. TeleOp".** The test robot has all of those in its configuration.
+- **2026-11-08: Aim target rule.** The up cell of our HIVE (from `Hives`); if unknown, the last known up cell; if
+  that is unknown too, any of our HIVE's tags in view; if no tag is in view the robot does not turn by itself
+  (the right stick still turns it). Our HIVE comes from the alliance chosen at INIT. The left-right angle is the
+  angle seen from above, corrected for the camera's tilt (same tilt setting as `Hives`).
+
 ## Mixing Pinpoint and tags (decided 2026-11-01)
 
 The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't drift. So:
@@ -243,6 +255,7 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 ## Pieces (order confirmed 2026-11-01)
 
 (2026-11-01: piece 2 is built and committed as a placeholder, untested; its values get tuned at HQ.)
+(2026-11-08: piece 5 done: "Aim Test" works on the test robot. See BACKLOG for the idea of aiming when the target tags are out of view.)
 (2026-11-08: piece 3 done: tested on the practice rig, "pretty good"; both HIVEs read correctly from the blue side. Camera tilt and height are placeholders until the Limelight is mounted.)
 
 1. **Limelight reads tags:** a `Vision` subsystem that reads the tags and shows them in telemetry.
@@ -253,7 +266,7 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 3. **HIVE is up detection (changed 2026-11-02):** for each cell, UP / DOWN / MOVING / NOT SEEN, from the
    tags' height and angle (no map). Test: tip the practice HIVE by hand and watch the telemetry.
 4. **Position correction:** mix Pinpoint and tags. **Postponed 2026-11-01** (see Set aside).
-5. **TeleOp aim:** hold RIGHT_BUMPER to face our HIVE.
+5. **TeleOp aim:** hold RIGHT_BUMPER to face our HIVE (camera only, decided 2026-11-08).
 6. **Auto:** aim step, "wait until HIVE down" step with time limit, then park if it never tips.
 
 ## Open questions
@@ -266,3 +279,6 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 - **Position correction from tags (piece 4), postponed 2026-11-01.** Why: it needs the full tag map and a
   lot of tuning, and the user is away from the robot for a week. The tag map (piece 2) is built and kept
   (`vision/TagMap.java`, "Tag Map Check") but untested. It may come back if the Pinpoint drifts too much.
+- **Position-based aiming (turn toward the HIVE using the Pinpoint position), set aside 2026-11-08.** Why: the
+  Limelight is locked in place on the robot, so aiming with it is simpler and needs no start pose. It may
+  come back to help when no tag is in view.

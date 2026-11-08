@@ -98,19 +98,21 @@ teamcode/
 ├── opmodes/
 │   ├── teleop/MainTeleOp.java   "A. TeleOp": the match TeleOp
 │   ├── auto/MainAuto.java       "A. Auto": a single Auto for both alliances
-│   └── test/                    SystemCheck (pre-match check), SlothTest, VisionTest, TagMapCheck, HiveStateTest
+│   └── test/                    SystemCheck (pre-match check), SlothTest, VisionTest, TagMapCheck, HiveStateTest, AimTest
 ├── subsystems/                  1 class = 1 mechanism
 │   ├── Drivetrain.java          drivetrain (holds the Pedro Follower)
 │   ├── Intake.java              example mechanism, the template to copy
 │   ├── Vision.java              the Limelight: AprilTags in view
-│   └── Hives.java               which CELL of each HIVE is up (from the tags)
+│   ├── Hives.java               which CELL of each HIVE is up (from the tags)
+│   └── HiveAim.java             how much to turn to face the up CELL (Limelight only)
 ├── robot/
 │   ├── Robot.java               creates and registers every subsystem, enables bulk reads
 │   ├── HardwareNames.java       ALL hardware configuration names
 │   └── BatteryVoltage.java      battery voltage (re-read every 500 ms) and compensation
 ├── vision/
 │   ├── TagMap.java              where each AprilTag is on the field + camera position from a tag
-│   └── HiveLogic.java           the maths behind "is this CELL up?" (no hardware)
+│   ├── HiveLogic.java           the maths behind "is this CELL up?" (no hardware)
+│   └── AimLogic.java            the maths behind aiming at tags (no hardware)
 ├── pedro/
 │   ├── Constants.java           Pedro settings (TODO values to fill in after AutoTune)
 │   ├── Tuning.java              registers the AutoTune procedures
