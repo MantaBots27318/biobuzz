@@ -89,6 +89,8 @@ Keep this up to date with every configuration change on the Driver Hub.
 | `pinpoint`    | goBILDA Pinpoint  | Control Hub I2C  | ?    |
 | `intake`      | Motor             | Expansion Hub    | ?    |
 | `limelight`   | Limelight 3A      | Control Hub USB  | ?    |
+| `shooterLeft` | Motor             | ?                | ?    |
+| `shooterRight`| Motor             | ?                | ?    |
 
 ## Owners
 
