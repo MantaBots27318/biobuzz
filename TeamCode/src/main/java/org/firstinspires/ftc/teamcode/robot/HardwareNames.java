@@ -19,4 +19,6 @@ public final class HardwareNames {
 
     // Mechanisms
     public static final String INTAKE = "intake";
+    public static final String SHOOTER_LEFT = "shooterLeft";
+    public static final String SHOOTER_RIGHT = "shooterRight";
 }
