@@ -244,6 +244,24 @@ robot. Margin and "how long is stable" are settings to tune in Panels.
   the real camera tilt and height (`Hives` settings), the aim gains, and the "aim when the target is out of
   view" idea.
 
+- **2026-11-08 (user): do piece 4 now** (position correction); it is no longer postponed. The tag map is confirmed
+  and the HIVE up detection works, which is what it needs.
+- **2026-11-08 (user, "I do not really know, do A"): piece 4 corrects x and y only, not the heading.** The Pinpoint's
+  heading is reliable; a tag's angle is noisier. The test shows the heading disagreement for information.
+- **2026-11-08: Piece 4 defaults (Claude's, to veto).** Only tags whose HIVE is settled (UP or DOWN) are used; a
+  reading is thrown out when the camera height it implies is too far from the real mounting height; the median
+  over the tags in view is used. The correction is a delta: measured position minus the Pinpoint position
+  from the moment of the picture (camera delay), added to the current position with a gain. The gain is higher
+  for close tags, several tags and a slow robot. Several consecutive readings that agree with each other but
+  not with the Pinpoint make it jump to the tag position (bump). Until the pose is known (TeleOp without an
+  Auto before it), the first good reading sets the position. The camera's place on the robot (forward, left)
+  is a setting. A "Localization Test" OpMode has a fake-bump button. Switch `ENABLED` in Panels.
+- **2026-11-08 (user): the TeleOp can start from a set position, as an option** (`TELEOP_START_ENABLED`, with x, y
+  and heading in blue-side coordinates, turned for red). Order at START: the Auto's pose, else the set spot if
+  enabled, else the first good tag reading sets the position. More accurate than waiting for a tag.
+- **2026-11-08: the Pinpoint+Limelight pairing idea is covered by the gates** (height, agreement with the
+  Pinpoint, snap logic); no separate quadrant check for now.
+
 ## Mixing Pinpoint and tags (decided 2026-11-01)
 
 The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't drift. So:
@@ -260,6 +278,7 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 ## Pieces (order confirmed 2026-11-01)
 
 (2026-11-08: piece 2 done: "Tag Map Check" on the rebuilt rig gives every cluster, both HIVE positions, within 1 to 3 in. The tag map is now confirmed for the real field layout.)
+(2026-11-08: piece 4 built and committed as a placeholder: checked by simulation only, never run on the robot; gains and camera offsets get tuned at HQ.)
 (2026-11-08: piece 5 done: "Aim Test" works on the test robot. See BACKLOG for the idea of aiming when the target tags are out of view.)
 (2026-11-08: piece 3 done: tested on the practice rig, "pretty good"; both HIVEs read correctly from the blue side. Camera tilt and height are placeholders until the Limelight is mounted.)
 
@@ -270,7 +289,7 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 2. **Tag positions:** both positions of every cluster, from the CAD model, checked on the practice HIVE.
 3. **HIVE is up detection (changed 2026-11-02):** for each cell, UP / DOWN / MOVING / NOT SEEN, from the
    tags' height and angle (no map). Test: tip the practice HIVE by hand and watch the telemetry.
-4. **Position correction:** mix Pinpoint and tags. **Postponed 2026-11-01** (see Set aside).
+4. **Position correction:** mix Pinpoint and tags. Postponed 2026-11-01, **reinstated 2026-11-08** (x and y only).
 5. **TeleOp aim:** hold RIGHT_BUMPER to face our HIVE (camera only, decided 2026-11-08).
 6. **Auto:** aim step, "wait until HIVE down" step with time limit, then park if it never tips.
 
@@ -281,7 +300,7 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 
 ## Set aside
 
-- **Position correction from tags (piece 4), postponed 2026-11-01.** Why: it needs the full tag map and a
+- **Position correction from tags (piece 4), postponed 2026-11-01, REINSTATED 2026-11-08 (see Decisions).** Why: it needs the full tag map and a
   lot of tuning, and the user is away from the robot for a week. The tag map (piece 2) is built and kept
   (`vision/TagMap.java`, "Tag Map Check") but untested. It may come back if the Pinpoint drifts too much.
 - **Position-based aiming (turn toward the HIVE using the Pinpoint position), set aside 2026-11-08.** Why: the

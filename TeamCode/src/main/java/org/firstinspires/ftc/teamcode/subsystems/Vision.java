@@ -51,6 +51,9 @@ public class Vision extends SubsystemBase {
     private List<Tag> tags = Collections.emptyList();
     private long ageMs = -1;
     private boolean started = false;
+    private long frameId = 0;
+    private double lastFrameStamp = Double.NaN;
+    private double latencyMs = 0;
 
     public Vision(HardwareMap hardwareMap) {
         limelight = hardwareMap.get(Limelight3A.class, HardwareNames.LIMELIGHT);
@@ -72,6 +75,16 @@ public class Vision extends SubsystemBase {
     public void periodic() {
         if (!started) return;
         LLResult result = limelight.getLatestResult();
+        if (result != null) {
+            // A new picture has a new timestamp: count them so that one picture is used only once
+            double stamp = result.getTimestamp();
+            if (stamp != lastFrameStamp) {
+                lastFrameStamp = stamp;
+                frameId++;
+            }
+            // How long ago the picture was taken; not yet verified against the real delay
+            latencyMs = result.getCaptureLatency() + result.getTargetingLatency() + result.getStaleness();
+        }
         if (result == null || !result.isValid()) {
             tags = Collections.emptyList();
             ageMs = result == null ? -1 : result.getStaleness();
@@ -105,6 +118,16 @@ public class Vision extends SubsystemBase {
     /** Age of the latest reading in milliseconds, -1 if there is none. */
     public long getAgeMs() {
         return ageMs;
+    }
+
+    /** Goes up by one for each new picture from the camera. */
+    public long getFrameId() {
+        return frameId;
+    }
+
+    /** How long ago the latest picture was taken, in milliseconds. */
+    public double getLatencyMs() {
+        return latencyMs;
     }
 
     public boolean isConnected() {

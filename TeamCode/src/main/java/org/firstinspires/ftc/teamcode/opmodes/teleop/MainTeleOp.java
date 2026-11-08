@@ -48,7 +48,9 @@ public class MainTeleOp extends CommandOpMode {
         if (gamepad1.x) alliance = Alliance.BLUE;
         if (gamepad1.b) alliance = Alliance.RED;
         telemetry.addData("Alliance", "%s   (X = blue, B = red)", alliance);
-        telemetry.addData("Pose", poseFromAuto ? "taken from the Auto" : "place the robot facing away from the driver");
+        telemetry.addData("Pose", poseFromAuto ? "taken from the Auto"
+                : robot.localizer.hasTeleOpStart() ? "set to the TeleOp start spot (see the settings)"
+                : "place the robot facing away from the driver");
         telemetry.update();
     }
 
@@ -59,8 +61,14 @@ public class MainTeleOp extends CommandOpMode {
         robot.vision.start();
         if (poseFromAuto) {
             robot.drivetrain.setPose(MatchState.pose());
+            robot.localizer.setPoseKnown(true);
+        } else if (robot.localizer.hasTeleOpStart()) {
+            robot.drivetrain.setPose(robot.localizer.teleOpStartPose(alliance));
+            robot.localizer.setPoseKnown(true);
         } else {
+            // Position unknown: the first good tag reading sets it
             robot.drivetrain.resetHeading();
+            robot.localizer.setPoseKnown(false);
         }
     }
 
@@ -78,6 +86,7 @@ public class MainTeleOp extends CommandOpMode {
         telemetry.addData("Loop", "%.0f Hz", loopTimer.hz());
         telemetry.addData("Battery", "%.1f V", robot.battery.volts());
         telemetry.addData("Pose", robot.drivetrain.pose());
+        telemetry.addData("Tags", robot.localizer.getStatus());
         telemetry.addData("Aim", "%s, error %.1f deg%s", robot.aim.getTargetName(), robot.aim.getErrorDeg(),
                 robot.aim.isAimed() ? " (aimed)" : "");
         telemetry.update();

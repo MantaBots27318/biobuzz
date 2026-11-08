@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.HiveAim;
 import org.firstinspires.ftc.teamcode.subsystems.Hives;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.TagLocalizer;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
 
 /**
@@ -22,6 +23,7 @@ public class Robot {
     public final Vision vision;
     public final Hives hives;
     public final HiveAim aim;
+    public final TagLocalizer localizer;
 
     public Robot(HardwareMap hardwareMap) {
         // Bulk reads: one grouped read per hub per loop; the CommandScheduler clears the cache
@@ -34,7 +36,8 @@ public class Robot {
         vision = new Vision(hardwareMap);
         hives = new Hives(vision);
         aim = new HiveAim(vision, hives);
+        localizer = new TagLocalizer(drivetrain, vision, hives);
 
-        CommandScheduler.getInstance().registerSubsystem(drivetrain, intake, vision, hives, aim);
+        CommandScheduler.getInstance().registerSubsystem(drivetrain, intake, vision, hives, aim, localizer);
     }
 }
