@@ -58,3 +58,26 @@
 
 - User: "it works". Seen: when the camera sees tags that are not the target cell's, the robot does not turn
   (by design). Recorded in BACKLOG.md as an idea.
+
+## Tag Map Check on the rebuilt rig, 2026-11-08 (camera looking toward +y from the audience side)
+
+- Typed in Panels: x 0.0 (meant relative to the HIVE center, should have been 72), y 27, height 14. States:
+  `BLUE_FAR_CELL_UP` false, `RED_FAR_CELL_UP` false. So the "error" lines were meaningless (x in the wrong frame);
+  the "camera at" lines are what count.
+- Six tags from four clusters (red audience 34, 35; blue audience 38, 40; red far 31; blue far 44), both HIVEs,
+  both cell positions (one up, one down each) agree on one spot: x 70.5 to 75.4 (mean 73.0), y 23.5 to 25.0
+  (mean 24.3), height 11.9 to 18.2 (mean 14.1, typed 14), heading 86 to 92 deg (looking toward +y),
+  camera tilt 26 to 31 deg (mean 28.4, measured 28). Tags 34 and 35, at the edge of the picture, are the worst.
+- So the map is right for all four clusters on the rebuilt rig, to about 3 in. The only gap is y: 24.3 against
+  the typed 27 (2.7 in.), likely the tape measure reference (lens against the point measured).
+
+## Tag Map Check, second run on the rebuilt rig, 2026-11-08: piece 2 passes
+
+- Run 1: typed (72, 15), height 14, both flags false, camera looking toward +y. Blue audience tags 38 to 41:
+  errors 3.1, 2.2, 1.0, 2.2 in.; heights within 1.3 in.; tilt 26 to 29 deg.
+- Run 2: typed (107, 126), height 14, both flags true (blue far cell up, red far cell up), camera looking
+  toward the audience on the blue side. Tags 42, 43 (blue far) and 30 (red far): errors 1.7, 2.0, 3.1 in.;
+  heights within 1.0 in.; tilt 28 to 29 deg.
+- Together with the first run, every cluster and both positions of each HIVE have now been checked, to about
+  1 to 3 in. In both runs the computed x is 1 to 3 in. larger than the typed one whatever way the camera
+  points (red and blue alike), so it is most likely the tape measure reference, not the map.

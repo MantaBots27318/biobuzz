@@ -239,6 +239,11 @@ robot. Margin and "how long is stable" are settings to tune in Panels.
   (the right stick still turns it). Our HIVE comes from the alliance chosen at INIT. The left-right angle is the
   angle seen from above, corrected for the camera's tilt (same tilt setting as `Hives`).
 
+- **2026-11-08 (user): wait for piece 6 (the Auto) until the final robot exists.** The test setup is not the final
+  robot, so the Auto's paths, shooting spots and timing cannot be made yet. Also waiting for the final robot:
+  the real camera tilt and height (`Hives` settings), the aim gains, and the "aim when the target is out of
+  view" idea.
+
 ## Mixing Pinpoint and tags (decided 2026-11-01)
 
 The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't drift. So:
@@ -254,7 +259,7 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 
 ## Pieces (order confirmed 2026-11-01)
 
-(2026-11-01: piece 2 is built and committed as a placeholder, untested; its values get tuned at HQ.)
+(2026-11-08: piece 2 done: "Tag Map Check" on the rebuilt rig gives every cluster, both HIVE positions, within 1 to 3 in. The tag map is now confirmed for the real field layout.)
 (2026-11-08: piece 5 done: "Aim Test" works on the test robot. See BACKLOG for the idea of aiming when the target tags are out of view.)
 (2026-11-08: piece 3 done: tested on the practice rig, "pretty good"; both HIVEs read correctly from the blue side. Camera tilt and height are placeholders until the Limelight is mounted.)
 

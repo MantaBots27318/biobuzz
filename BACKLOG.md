@@ -36,3 +36,10 @@ The user could not recreate it and a later check from the blue side was fully co
   rough aim, then the fine aim takes over (needs a switch with a little hysteresis so it does not jump
   between cells); (B, bigger) use the tag map to work out the camera's heading and position from any tag in
   view, then turn toward the target by position (needs the tag map confirmed on the rebuilt rig).
+
+## Idea from the user, 2026-11-08: pair the Pinpoint and the Limelight
+
+- The Pinpoint gives the quadrant the robot is in, so we know which AprilTags to expect in view. Use it to
+  sanity-check tag readings (a tag the robot should not see from here, or a position far from the Pinpoint's,
+  is probably wrong), and later to help aim when the target tags are out of view. Belongs with the postponed
+  piece 4 (position correction) and the "aim when the target is out of view" idea above.
