@@ -204,6 +204,29 @@ robot. Margin and "how long is stable" are settings to tune in Panels.
   "HIVE is down" = tag seen and low enough (one number to calibrate on the practice HIVE). The tag-based
   position correction (piece 4) is postponed. Raised by the user: "we did not do this in past years".
 
+- **2026-11-02 (user correction): we can only shoot into a HIVE when the CELL we aim at is UP.** The earlier
+  wording "never shoot before the HIVE is fully down" was backwards or at least unclear (down = the
+  other CELL). The rule is: **shoot only when our target CELL is up and has stopped moving** (stable for a
+  short time, a setting). The Auto's wait step waits for that, then shoots; if it never happens before the
+  time limit, keep the balls and park. Piece 3 is therefore "HIVE is up detection", not "down".
+- **2026-11-02: Piece 3 uses the short way, no map (confirmed by the user).** Each tag's height is worked out
+  from the camera reading and the camera's mounting height and tilt (measured once at HQ); a CELL whose tags
+  are high (about 50 in. against about 36 in. when down) is up.
+- **2026-11-02 (user): the tag's angle counts too.** A CELL is "up and ready" only when the tags are at the right
+  height AND at the right 30 deg tilt. Note: the tilt is 30 deg in BOTH resting positions (only the lean
+  direction flips), so the height says up or down, and the angle says "stopped moving" (halfway through a
+  tip the bar is level and the tags face straight down, so the angle is far from 30 deg). A short hold time
+  (a setting) is kept on top.
+
+- **2026-11-08 (HQ test, see docs/NOTES.md): the tag map and angle conventions work** (red tags within
+  1 to 4 in.). On the practice rig the blue IDs 38-41 / 42-45 sit on the opposite cells to the manual.
+  **Checked against Figure 9-17 (2026-11-08): the figure agrees with the manual's text, so the map is
+  right for the real field and the practice rig is the odd one.** The user is rebuilding the rig's blue
+  HIVE to match; no switch in the code (one was added and removed the same day).
+- **2026-11-08 (user): the camera sees both HIVEs, and both cells of each, from under the structure.**
+  Proposal for piece 3: when both cells of a HIVE are in view, the higher one is up (no mount
+  measurement needed); the absolute height threshold stays as the fallback when only one is in view.
+
 ## Mixing Pinpoint and tags (decided 2026-11-01)
 
 The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't drift. So:
@@ -220,15 +243,16 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 ## Pieces (order confirmed 2026-11-01)
 
 (2026-11-01: piece 2 is built and committed as a placeholder, untested; its values get tuned at HQ.)
+(2026-11-08: piece 3 done: tested on the practice rig, "pretty good"; both HIVEs read correctly from the blue side. Camera tilt and height are placeholders until the Limelight is mounted.)
 
 1. **Limelight reads tags:** a `Vision` subsystem that reads the tags and shows them in telemetry.
    Test: point it at the practice HIVE, check the IDs and distances.
    **Done 2026-11-01**, tested on last year's robot: IDs and distances right once the Limelight's
    Marker Size was set to 82.55 mm (3.25 in.).
 2. **Tag positions:** both positions of every cluster, from the CAD model, checked on the practice HIVE.
-3. **HIVE state:** each HIVE tracked as position A, position B or tipping. Test: tip the practice HIVE
-   by hand and watch the telemetry.
-4. **Position correction:** mix Pinpoint and tags. Test: push the robot off course, watch it correct.
+3. **HIVE is up detection (changed 2026-11-02):** for each cell, UP / DOWN / MOVING / NOT SEEN, from the
+   tags' height and angle (no map). Test: tip the practice HIVE by hand and watch the telemetry.
+4. **Position correction:** mix Pinpoint and tags. **Postponed 2026-11-01** (see Set aside).
 5. **TeleOp aim:** hold RIGHT_BUMPER to face our HIVE.
 6. **Auto:** aim step, "wait until HIVE down" step with time limit, then park if it never tips.
 

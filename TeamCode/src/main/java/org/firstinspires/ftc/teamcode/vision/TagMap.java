@@ -127,11 +127,7 @@ public class TagMap {
      */
     public static CameraPose cameraFromTag(TagPose tag, double tx, double ty, double tz,
                                            double rollDeg, double pitchDeg, double yawDeg) {
-        double[][] rx = rotX(Math.toRadians(rollDeg));
-        double[][] ry = rotY(Math.toRadians(pitchDeg));
-        double[][] rz = rotZ(Math.toRadians(yawDeg));
-        // Tag frame -> camera frame
-        double[][] tagToCamera = EULER_ZYX ? mul(rz, mul(ry, rx)) : mul(rx, mul(ry, rz));
+        double[][] tagToCamera = tagToCamera(rollDeg, pitchDeg, yawDeg);
 
         // The tag's own frame as seen when looking at it: x right, y down, z into the tag
         double[] zt = {-tag.normal[0], -tag.normal[1], -tag.normal[2]};
@@ -148,6 +144,24 @@ public class TagMap {
         return new CameraPose(tag.x - offset[0], tag.y - offset[1], tag.z - offset[2],
                 Math.toDegrees(Math.atan2(forward[1], forward[0])),
                 Math.toDegrees(Math.asin(Math.max(-1, Math.min(1, forward[2])))));
+    }
+
+    /**
+     * The direction a tag faces (toward whoever sees it), in the camera frame, from the angles the
+     * Limelight reports. Uses the same angle convention as cameraFromTag (EULER_ZYX).
+     */
+    public static double[] tagNormalInCamera(double rollDeg, double pitchDeg, double yawDeg) {
+        double[][] r = tagToCamera(rollDeg, pitchDeg, yawDeg);
+        // The tag's z axis points into the tag, so the normal is minus its third column
+        return new double[]{-r[0][2], -r[1][2], -r[2][2]};
+    }
+
+    // Tag frame -> camera frame
+    private static double[][] tagToCamera(double rollDeg, double pitchDeg, double yawDeg) {
+        double[][] rx = rotX(Math.toRadians(rollDeg));
+        double[][] ry = rotY(Math.toRadians(pitchDeg));
+        double[][] rz = rotZ(Math.toRadians(yawDeg));
+        return EULER_ZYX ? mul(rz, mul(ry, rx)) : mul(rx, mul(ry, rz));
     }
 
     private static double[] cross(double[] a, double[] b) {
