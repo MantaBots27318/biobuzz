@@ -2,12 +2,10 @@
 
 ## To do at the robot (nothing here has run on the robot yet unless it says so)
 
-- **Test piece 4, "Localization Test"** (position correction): measure the Limelight's forward and left offsets
-  from the robot's reference point, set them in `TagLocalizer`, then follow the steps in the piece 4 brief.
-  Added 2026-11-08.
 - **Measure the TeleOp start spot** and set `TELEOP_START_ENABLED`, `TELEOP_START_X_IN`, `TELEOP_START_Y_IN` and
   `TELEOP_START_HEADING_DEG` in `TagLocalizer`'s settings (they are placeholders, option off). Added 2026-11-08.
-- **On the final robot:** measure the Limelight's real tilt and height and set `Hives.CAMERA_TILT_DEG` and
+- **On the final robot:** measure the Limelight's camera offsets from the robot's reference point (now 6 in. forward,
+  0 left in `TagLocalizer`) and its real tilt and height and set `Hives.CAMERA_TILT_DEG` and
   `Hives.CAMERA_HEIGHT_IN` (now 28 deg and 14 in. on the test setup); tune the aim in `HiveAim` (turn strength,
   maximum and minimum power, tolerance, launcher offset). Added 2026-11-08.
 - **Fill in the Limelight's USB port** in the "Wiring" table of TeamCode/README.md (still `?`). Added 2026-11-01.
@@ -16,6 +14,8 @@
 
 ## Done
 
+- 2026-11-14: "Localization Test" run on the test robot: the 14 in. fake bump is fixed in a split second, driving,
+  unknown start, HIVE moving and covered camera all work (piece 4). Camera offset measured: 6 in. forward, 0 left.
 - 2026-11-01 to 11-08: Limelight set up (pipeline Marker Size 82.55 mm, name `limelight`), "Vision Test" run:
   distances spot on (piece 1, `c0098fc`).
 - 2026-11-08: "Tag Map Check" run on the rebuilt rig: all clusters and both HIVE positions agree to about 1 to

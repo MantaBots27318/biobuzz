@@ -24,7 +24,7 @@ public class TagLocalizer extends SubsystemBase {
     public static boolean ENABLED = true;
 
     // Where the camera sits relative to the robot's reference point (the Pinpoint's tracking point), in the robot's frame
-    public static double CAMERA_FORWARD_IN = 0;
+    public static double CAMERA_FORWARD_IN = 6;
     public static double CAMERA_LEFT_IN = 0;
     // Which way the camera points compared with the robot's front: only used for the heading information
     public static double CAMERA_YAW_DEG = 0;

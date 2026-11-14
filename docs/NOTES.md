@@ -81,3 +81,12 @@
 - Together with the first run, every cluster and both positions of each HIVE have now been checked, to about
   1 to 3 in. In both runs the computed x is 1 to 3 in. larger than the typed one whatever way the camera
   points (red and blue alike), so it is most likely the tape measure reference, not the map.
+
+## Localization Test at HQ, 2026-11-14
+
+- Camera offset measured on the test robot: 6 in. forward, 0 in. left of the Pinpoint's reference point.
+- Panels was down for a while: the test was run from the Driver Hub screen with the defaults in the code
+  (start x 72, y 24, heading 90 deg). Causes to check if it happens again: the computer not on the robot's
+  Wi-Fi, the page opened before the app was ready, no OpMode running, the app stuck (restart it).
+- User: "it all works": the fake bump (14 in., above the 10 in. snap limit) recovers in a split second; the
+  driving check, the unknown start, a moving HIVE and a covered camera were all fine. No numbers were kept.
