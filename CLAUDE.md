@@ -98,14 +98,23 @@ teamcode/
 ├── opmodes/
 │   ├── teleop/MainTeleOp.java   "A. TeleOp": the match TeleOp
 │   ├── auto/MainAuto.java       "A. Auto": a single Auto for both alliances
-│   └── test/                    SystemCheck (pre-match check), SlothTest
+│   └── test/                    SystemCheck (pre-match check), SlothTest, VisionTest, TagMapCheck, HiveStateTest, AimTest, LocalizationTest
 ├── subsystems/                  1 class = 1 mechanism
 │   ├── Drivetrain.java          drivetrain (holds the Pedro Follower)
-│   └── Intake.java              example mechanism, the template to copy
+│   ├── Intake.java              example mechanism, the template to copy
+│   ├── Vision.java              the Limelight: AprilTags in view
+│   ├── Hives.java               which CELL of each HIVE is up (from the tags)
+│   ├── HiveAim.java             how much to turn to face the up CELL (Limelight only)
+│   └── TagLocalizer.java        nudges the Pinpoint x and y toward what the tags say
 ├── robot/
 │   ├── Robot.java               creates and registers every subsystem, enables bulk reads
 │   ├── HardwareNames.java       ALL hardware configuration names
 │   └── BatteryVoltage.java      battery voltage (re-read every 500 ms) and compensation
+├── vision/
+│   ├── TagMap.java              where each AprilTag is on the field + camera position from a tag
+│   ├── HiveLogic.java           the maths behind "is this CELL up?" (no hardware)
+│   ├── AimLogic.java            the maths behind aiming at tags (no hardware)
+│   └── LocalizerLogic.java      the maths behind the position correction (no hardware)
 ├── pedro/
 │   ├── Constants.java           Pedro settings (TODO values to fill in after AutoTune)
 │   ├── Tuning.java              registers the AutoTune procedures
@@ -125,6 +134,7 @@ teamcode/
 | TeleOp / gamepads | `opmodes/teleop/MainTeleOp.java`, the "Gamepad controls" section of the README, section 6 below |
 | New mechanism | `subsystems/Intake.java` (template), `robot/Robot.java`, `robot/HardwareNames.java` |
 | Autonomous | `opmodes/auto/MainAuto.java`, `util/Alliance.java`, `util/MatchState.java` |
+| Anything with the Limelight / AprilTags (aiming, shooting only when the HIVE cell is up, position correction, an Auto that uses them) | `docs/AUTO-HANDOVER.md` first, then `docs/NOTES.md` (what the tests showed), `PLAN.md` (dated decisions), section 8 below |
 | Drivetrain / Pedro | `subsystems/Drivetrain.java`, `pedro/Constants.java`, the Pedro section of `TeamCode/docs/top-teams-research.md` |
 | Roadmap, best practices | `TeamCode/docs/top-teams-research.md` (priority checklist, Pedro 3.0.1 pitfalls, Sloth) |
 | Setup, deploying, VS Code | `VSCODE_SETUP.md` |
@@ -308,14 +318,33 @@ in `periodic()`.
   restarts and on every Sloth reload.
 - The poses currently in `MainAuto` are placeholders (`TODO`) to replace.
 
+### Using the Limelight (AprilTags) in an Auto or the TeleOp
+
+Built and tested on a test robot (branch `feat/apriltags`); **read `docs/AUTO-HANDOVER.md` before using it**: it
+lists what exists, what is verified, what is still a placeholder, and the traps. In short:
+
+- `robot.vision` (the Limelight), `robot.hives` (`isCellUp(cluster)`: our target cell is up and still, the
+  condition to shoot), `robot.aim` (`turnPower()` / `isAimed()`: how much to turn to face the up cell),
+  `robot.localizer` (corrects the Pinpoint's x and y from the tags by itself).
+- **An OpMode must call `robot.vision.start()` at START and `robot.vision.stop()` at the end**, and give the
+  alliance to `robot.aim` as well as to the drivetrain. `MainTeleOp` does this; `MainAuto` does not yet.
+- `HiveAim` only computes a number: the OpMode (or a command) passes `aim.turnPower()` to
+  `drivetrain.driveFieldCentric(...)`.
+- Never trust one tag alone (single tags are sometimes wrong); the code takes medians. Never shoot without having
+  seen the cell up: `NOT_SEEN` means "not up yet".
+- The camera mount (tilt, height, offsets) and all gains are placeholders until measured on the final robot.
+- Field frame for all tag code: Pedro, (0, 0) at the corner where the audience wall meets the red wall, +x toward
+  the blue wall, +y away from the audience, heading 0 toward the blue wall.
+- Tests: Vision Test, Tag Map Check, Hive State Test, Aim Test, Localization Test (group "Test").
+
 ---
 
 ## 9. Pedro Pathing: current state
 
-- `pedro/Constants.java` contains `TODO`s: until AutoTune has been run (Mecanum Tuner, then Pinpoint
-  Tuner, then Foresight Tuner, then Tests), `createFollower()` throws a clear exception.
-  **A. TeleOp and A. Auto therefore do not start before that tuning.** To test anything else, use
-  System Check or Sloth Test.
+- Pedro is tuned (AutoTune, PR #6, 2026-10-24): `pedro/Constants.java` has no `TODO` left. A. TeleOp and A. Auto
+  start as long as every device `Robot` needs is in the active configuration (`frontLeft`, `frontRight`,
+  `backLeft`, `backRight`, `pinpoint`, `intake`, `limelight`). To test one mechanism without the others, make
+  a test OpMode that builds only the subsystems it needs (see `opmodes/test/`).
 - A `@Tuner` method in `Tuning.java` must be `static`, take no arguments and return exactly
   `Procedure`, otherwise the app crashes at startup.
 - `Drivetrain.RED_DRIVER_FORWARD_DEG` (the Pedro heading of a robot moving away from the red driver)

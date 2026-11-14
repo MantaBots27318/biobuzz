@@ -58,6 +58,7 @@ Keep this up to date with every control change in `MainTeleOp`: it is the driver
 | 1 (driver) | Left stick | Field-centric movement (forward = away from the driver) |
 | 1 (driver) | Right stick (X axis) | Rotation |
 | 1 (driver) | BACK | Reset the heading (robot facing away from the driver) |
+| 1 (driver) | Hold RIGHT_BUMPER | Turn by itself to face the up CELL of our HIVE (needs a tag in view; the right stick turns again on release) |
 | 1 (driver) | X / B during init | Choose the blue / red alliance |
 | 2 (operator) | Hold A | Intake: collect |
 | 2 (operator) | Hold B | Intake: eject |
@@ -87,6 +88,7 @@ Keep this up to date with every configuration change on the Driver Hub.
 | `backRight`   | Motor             | Control Hub      | ?    |
 | `pinpoint`    | goBILDA Pinpoint  | Control Hub I2C  | ?    |
 | `intake`      | Motor             | Expansion Hub    | ?    |
+| `limelight`   | Limelight 3A      | Control Hub USB  | ?    |
 
 ## Owners
 

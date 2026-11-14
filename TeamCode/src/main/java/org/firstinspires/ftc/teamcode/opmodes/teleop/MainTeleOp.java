@@ -48,17 +48,27 @@ public class MainTeleOp extends CommandOpMode {
         if (gamepad1.x) alliance = Alliance.BLUE;
         if (gamepad1.b) alliance = Alliance.RED;
         telemetry.addData("Alliance", "%s   (X = blue, B = red)", alliance);
-        telemetry.addData("Pose", poseFromAuto ? "taken from the Auto" : "place the robot facing away from the driver");
+        telemetry.addData("Pose", poseFromAuto ? "taken from the Auto"
+                : robot.localizer.hasTeleOpStart() ? "set to the TeleOp start spot (see the settings)"
+                : "place the robot facing away from the driver");
         telemetry.update();
     }
 
     @Override
     public void preRun() {
         robot.drivetrain.setAlliance(alliance);
+        robot.aim.setAlliance(alliance);
+        robot.vision.start();
         if (poseFromAuto) {
             robot.drivetrain.setPose(MatchState.pose());
+            robot.localizer.setPoseKnown(true);
+        } else if (robot.localizer.hasTeleOpStart()) {
+            robot.drivetrain.setPose(robot.localizer.teleOpStartPose(alliance));
+            robot.localizer.setPoseKnown(true);
         } else {
+            // Position unknown: the first good tag reading sets it
             robot.drivetrain.resetHeading();
+            robot.localizer.setPoseKnown(false);
         }
     }
 
@@ -66,13 +76,24 @@ public class MainTeleOp extends CommandOpMode {
     public void run() {
         // The gamepad axes are inverted relative to Pedro's frame, hence the minus signs.
         // Set the input before super.run() so follower.update() applies it in the same loop.
-        robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+        // Driver: while RIGHT_BUMPER is held and a tag of our HIVE is in view, the robot turns by itself to face it
+        boolean aiming = gamepad1.right_bumper && robot.aim.hasTarget();
+        double turn = aiming ? robot.aim.turnPower() : -gamepad1.right_stick_x;
+        robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, -gamepad1.left_stick_x, turn);
         super.run();
 
         loopTimer.tick();
         telemetry.addData("Loop", "%.0f Hz", loopTimer.hz());
         telemetry.addData("Battery", "%.1f V", robot.battery.volts());
         telemetry.addData("Pose", robot.drivetrain.pose());
+        telemetry.addData("Tags", robot.localizer.getStatus());
+        telemetry.addData("Aim", "%s, error %.1f deg%s", robot.aim.getTargetName(), robot.aim.getErrorDeg(),
+                robot.aim.isAimed() ? " (aimed)" : "");
         telemetry.update();
+    }
+
+    @Override
+    public void end() {
+        robot.vision.stop();
     }
 }
