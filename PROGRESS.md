@@ -7,4 +7,4 @@ Legend: [ ] to do, [>] in progress, [~] built but not tested (placeholder values
 - [x] 3. HIVE is up detection (brief: briefs/phase1-piece3.md): tested on the practice rig 2026-11-08; camera tilt and height still to set when the Limelight is mounted
 - [x] 4. Position correction (brief: briefs/phase1-piece4.md): tested on the robot 2026-11-14 ("it all works"); gains and limits are still placeholders to tune on the final robot
 - [x] 5. TeleOp aim (brief: briefs/phase1-piece5.md): tested on the robot 2026-11-08 ("it works"); gains are still placeholders to tune
-- [ ] 6. Auto (waiting for the final robot, decided 2026-11-08)
+- [ ] 6. Auto (waiting for the final robot, decided 2026-11-08). Start from docs/AUTO-HANDOVER.md

@@ -277,6 +277,8 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 
 ## Pieces (order confirmed 2026-11-01)
 
+(2026-11-14: a handover for piece 6, the Auto, is in docs/AUTO-HANDOVER.md.)
+
 (2026-11-08: piece 2 done: "Tag Map Check" on the rebuilt rig gives every cluster, both HIVE positions, within 1 to 3 in. The tag map is now confirmed for the real field layout.)
 (2026-11-14: piece 4 done: "Localization Test" works on the test robot: the bump is fixed in a split second, driving, unknown start, HIVE moving and covered camera all fine. Camera offset measured: 6 in. forward, 0 left.)
 (2026-11-08: piece 5 done: "Aim Test" works on the test robot. See BACKLOG for the idea of aiming when the target tags are out of view.)

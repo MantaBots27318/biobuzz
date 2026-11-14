@@ -9,7 +9,7 @@
   `Hives.CAMERA_HEIGHT_IN` (now 28 deg and 14 in. on the test setup); tune the aim in `HiveAim` (turn strength,
   maximum and minimum power, tolerance, launcher offset). Added 2026-11-08.
 - **Fill in the Limelight's USB port** in the "Wiring" table of TeamCode/README.md (still `?`). Added 2026-11-01.
-- **Piece 6, the Auto** (aim step, wait until our target cell is up with a time limit, then park if it never
+- **Piece 6, the Auto** (start from docs/AUTO-HANDOVER.md) (aim step, wait until our target cell is up with a time limit, then park if it never
   happens): waits for the final robot. Decided 2026-11-08.
 
 ## Done
