@@ -1,18 +1,28 @@
 # BACKLOG
 
-- **Fill in the Limelight's USB port** in the "Wiring" table of TeamCode/README.md (still `?`).
-  Why: asked on 2026-11-01, not answered yet.
-- **Confirm the 45º** (camera tilt?) with the build team before choosing the mounting.
-  Why: noted 2026-11-01 as "best angle for seeing the tags", meaning not confirmed.
+## To do at the robot (nothing here has run on the robot yet unless it says so)
+
+- **Test piece 4, "Localization Test"** (position correction): measure the Limelight's forward and left offsets
+  from the robot's reference point, set them in `TagLocalizer`, then follow the steps in the piece 4 brief.
+  Added 2026-11-08.
+- **Measure the TeleOp start spot** and set `TELEOP_START_ENABLED`, `TELEOP_START_X_IN`, `TELEOP_START_Y_IN` and
+  `TELEOP_START_HEADING_DEG` in `TagLocalizer`'s settings (they are placeholders, option off). Added 2026-11-08.
+- **On the final robot:** measure the Limelight's real tilt and height and set `Hives.CAMERA_TILT_DEG` and
+  `Hives.CAMERA_HEIGHT_IN` (now 28 deg and 14 in. on the test setup); tune the aim in `HiveAim` (turn strength,
+  maximum and minimum power, tolerance, launcher offset). Added 2026-11-08.
+- **Fill in the Limelight's USB port** in the "Wiring" table of TeamCode/README.md (still `?`). Added 2026-11-01.
+- **Piece 6, the Auto** (aim step, wait until our target cell is up with a time limit, then park if it never
+  happens): waits for the final robot. Decided 2026-11-08.
 
 ## Done
 
-## When back at HQ (about 2026-11-08): everything below is built but never run on the robot
-
-- Run "Vision Test" again: piece 1's `Vision` now also reads the tag angles (added in piece 2).
-- Run "Tag Map Check" (piece 2): compare computed and typed camera positions. If every tag is wrong, try
-  `TagMap.EULER_ZYX` and `TagMap.IDS_LEFT_TO_RIGHT` in Panels. Added 2026-11-01.
-- Measure the real height and angle to mount the Limelight (starting idea: 45 deg tilt, to confirm).
+- 2026-11-01 to 11-08: Limelight set up (pipeline Marker Size 82.55 mm, name `limelight`), "Vision Test" run:
+  distances spot on (piece 1, `c0098fc`).
+- 2026-11-08: "Tag Map Check" run on the rebuilt rig: all clusters and both HIVE positions agree to about 1 to
+  3 in. (piece 2, `5e42042`). The EULER_ZYX and IDS_LEFT_TO_RIGHT switches did not need changing.
+- 2026-11-08: Limelight tilt measured on the test setup: about 28 deg, height 14 in.; the 45 deg idea is dropped
+  for now (final robot: measure again).
+- 2026-11-08: "Hive State Test" and "Aim Test" run on the test robot (pieces 3 and 5, `25f329f`, `d05ea99`).
 
 ## Found at HQ, 2026-11-08 ("Hive State Test"): not reproduced, closed 2026-11-08
 
