@@ -19,8 +19,8 @@ import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 @Configurable
 @TeleOp(name = "Shooting Test", group = "Test")
 public class ShootingTest extends OpMode {
-    public static double POWER = 1.5;
-    public static double RUN_TIME_S = 0.2;
+    public static double POWER = 1;
+    public static double RUN_TIME_S = 0.12;
 
     private DcMotorEx leftMotor, rightMotor;
     private final ElapsedTime timer = new ElapsedTime();
@@ -47,8 +47,8 @@ public class ShootingTest extends OpMode {
         }
 
         // The motors face each other, so the same power in opposite directions
-        leftMotor.setPower(direction * POWER);
-        rightMotor.setPower(-direction * POWER);
+        leftMotor.setPower(-direction * POWER);
+        rightMotor.setPower(direction * POWER);
 
         telemetry.addData("State", direction > 0 ? "shooting" : direction < 0 ? "reversing" : "stopped");
         telemetry.addData("Time left", "%.1f s", direction == 0 ? 0 : Math.max(0, RUN_TIME_S - timer.seconds()));
