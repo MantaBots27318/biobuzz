@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 
 import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.pedro.ShiftedLocalizer;
 import org.firstinspires.ftc.teamcode.util.Alliance;
 
 /**
@@ -61,6 +62,14 @@ public class Drivetrain extends SubsystemBase {
 
     public Pose pose() {
         return follower.pose();
+    }
+
+    /**
+     * Moves the position by (dx, dy) inches for the tag correction. Unlike setPose(), nothing is written to the
+     * Pinpoint, so the heading and the motion since the last reading are kept.
+     */
+    public void shiftPosition(double dx, double dy) {
+        ((ShiftedLocalizer) follower.localizer).shift(dx, dy);
     }
 
     private double driverForward() {

@@ -81,7 +81,8 @@ public class Constants {
     
     public static Follower create(HardwareMap h) {
         return new Follower(
-                new PinpointLocalizer(h, localizerConfig),
+                // Wrapped so the tags can shift x and y without writing to the Pinpoint (see ShiftedLocalizer)
+                new ShiftedLocalizer(new PinpointLocalizer(h, localizerConfig)),
                 new Mecanum(h, drivetrainConfig),
                 new Foresight(foresightConfig)
         );

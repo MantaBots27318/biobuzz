@@ -56,6 +56,14 @@ Source: [TeamCode/docs/manual/](TeamCode/docs/manual/) (on `master` once PR #7 i
   face the HIVE by itself and stays aimed; the driver keeps moving with the left stick. On release,
   the right stick controls turning again.
 
+- **2026-11-22: Use PlayStation button names in the code** (`cross`, `circle`, `square`, `triangle` instead of
+  `a`, `b`, `x`, `y`): the team drives with PS controllers. Same physical buttons (Cross = A, Circle = B,
+  Square = X, Triangle = Y), so only names and Driver Hub text change; alliance choice becomes Square = blue,
+  Circle = red. Done as its own piece on a branch from `master`, after piece 7 is finished or saved; then
+  `master` is merged into each branch still in use. To stop the old names coming back from other branches: the
+  rule goes into CLAUDE.md and the README, and the GitHub "Build" check fails any PR that uses `gamepad.a/b/x/y`
+  or `Button.A/B/X/Y` (old names still work on the robot, so nothing breaks; it only keeps the names consistent).
+
 ## Idea to confirm: telling when a HIVE has finished tipping
 
 A tag reading gives the tag's position and angle. Compare it to the 2 known stable positions of that
@@ -310,6 +318,20 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
    - 2026-11-22: the Limelight is stopped before the park: with it running the loop is 3 to 4 times slower and the park ended 15 to 20 deg turned.
    - Next (user, 2026-11-22): make the loop lighter with the camera on (see BACKLOG.md), since it does not need the final robot.
 
+7. **Loop time with the camera on (added 2026-11-22, user).** With tags in view the loop is 3 to 4 times slower and
+   Pedro drives worse. It does not need the final robot. Decided 2026-11-22: measure first with a "Loop Check" test
+   tool (the robot drives the same back-and-forth path again and again so before/after numbers compare, user's
+   choice); add bulk reads to the far-start Auto (user: "maybe bulk reads would help"); Photon set aside (see below).
+   **Done 2026-11-22.** Decisions made while building it:
+   - The camera was not the cause: Loop Check showed it costs 0.1 ms. The cause was `TagLocalizer` writing a full
+     pose to the Pinpoint at every picture (slow writes, and an old heading put back during turns). It was running in
+     the Auto even with `USE_TAG_POSITION_FIX` false, because SolversLib subsystems register themselves.
+   - The tag fix now shifts x and y in software (`pedro/ShiftedLocalizer`), never the heading; "Localization Test"
+     re-run by the user: bump and heading both fine.
+   - The Auto really unregisters what it does not use. The camera stays on during the park (user). Park speed 50 in/s
+     (user: game speed; "works very well"). Limelight asked 50 times a second (user), its frame rate.
+   - Lowering the ask rate further, lighter logging and Photon: not needed (loop 8 ms standing, 14 ms driving).
+
 ## Open questions
 
 - Confirm the "telling when a HIVE has finished tipping" idea above once we see real readings.
@@ -325,3 +347,6 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
   come back to help when no tag is in view.
 
 (2026-11-14: in the far-start Auto the robot faces the HIVE from the Pinpoint (heading toward the HIVE pivot) while the target cell is not up or its tags are not in view, and uses the Limelight aim only once the cell is up. This is Auto-only; the TeleOp aim stays camera-only. The FLOWER pickup and second shot were taken out for now.)
+- **Photon (PhotonFTC), set aside 2026-11-22.** A library that speeds up talking to the hub's motors and sensors.
+  Why set aside: it does not touch the Limelight (the cause of our slow loop), it is marked experimental, and nothing
+  shows it works with SDK 12. It may come back if the hub reads turn out to be the slow part.

@@ -8,10 +8,12 @@ import com.pedropathing.algorithm.ForesightConfig;
 import com.pedropathing.api.PoseFactory;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.seattlesolvers.solverslib.command.Command;
 import com.seattlesolvers.solverslib.command.CommandOpMode;
+import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
@@ -58,9 +60,10 @@ public class FarStartAuto extends CommandOpMode {
     public static boolean USE_CAMERA = true;
     public static boolean USE_AIM = true;
     public static long CAMERA_OFF_WAIT_MS = 3000;
-    // The park does not need the camera. With tags in view the loop is 3 to 4 times slower (20 to 39 ms against 6 to 9),
-    // and with it running the park ended 15 to 20 deg turned. Stopped first, the park is parallel (tested 2026-11-22)
-    public static boolean STOP_CAMERA_BEFORE_PARK = true;
+    // Off (user, 2026-11-22): the camera stays on during the park. Stopping it was a workaround while the park ended
+    // 15 to 20 deg turned; the real cause was the tag fix writing an old heading to the Pinpoint, now fixed (with the
+    // camera on the park is parallel and the loop 7 to 19 ms). Kept as a switch
+    public static boolean STOP_CAMERA_BEFORE_PARK = false;
     // About 60% of the tuned top speed (68.7 in/s forward, 47.9 strafe). Above that the odometry pods lift when the
     // robot changes direction hard (user, 2026-11-21) and the Pinpoint loses distance. 0 = no limit.
     public static double MAX_SPEED_IN_PER_S = 40;
@@ -84,9 +87,10 @@ public class FarStartAuto extends CommandOpMode {
     // Only drive again if the last park drive stopped this far short (Pedro once ended a path a third of the way).
     // Small values make the robot push again into the wall when the Pinpoint thinks it is not there yet
     public static double PARK_TOLERANCE_IN = 6;
-    // Slower than the rest so the robot does not hit the wall hard (it bashed in at 40 in/s; at 20 it crawled and
-    // took 4.9 s, 2026-11-21)
-    public static double PARK_SPEED_IN_PER_S = 30;
+    // Game speed (user, 2026-11-22: at 30 in/s the park was "very cramped up"). The 2026-11-21 bash at 40 in/s was
+    // with the heading going wrong; the park starts from a stop, so the pods-lift limit (hard direction changes) is
+    // not hit. If it hits the wall hard, lower it
+    public static double PARK_SPEED_IN_PER_S = 50;
     // A park takes about 3 s: a short limit stops the robot pushing on the wall if it arrives early
     public static long PARK_TIMEOUT_MS = 4000;
     public static double ROBOT_HALF_LENGTH_IN = 12;
@@ -121,6 +125,8 @@ public class FarStartAuto extends CommandOpMode {
     public void initialize() {
         telemetry = TelemetryUtil.withPanels(telemetry);
         reset();
+        // Bulk reads, as in Robot: one grouped read per hub per loop, the scheduler clears the cache each run()
+        CommandScheduler.getInstance().setBulkReading(hardwareMap, LynxModule.BulkCachingMode.MANUAL);
         drivetrain = new Drivetrain(hardwareMap);
         if (MAX_SPEED_IN_PER_S > 0) speedLimit().set(MAX_SPEED_IN_PER_S);
         vision = new Vision(hardwareMap);
@@ -130,9 +136,11 @@ public class FarStartAuto extends CommandOpMode {
         // Vision first, then Hives, then the others: each reads the one before it
         // The position correction stays off until the camera is mounted for real: with the taped Limelight it moved
         // the Pinpoint 5 in. wrong in y (2026-11-21) and the park ended past the zone
-        if (!USE_CAMERA) register(drivetrain);
-        else if (USE_TAG_POSITION_FIX) register(drivetrain, vision, hives, aim, localizer);
-        else register(drivetrain, vision, hives, aim);
+        // Every subsystem registers itself when it is created (SolversLib's SubsystemBase), so the ones not wanted are
+        // taken out. Until 2026-11-22 the tag position fix ran in this Auto even with USE_TAG_POSITION_FIX false
+        CommandScheduler scheduler = CommandScheduler.getInstance();
+        if (!USE_CAMERA) scheduler.unregisterSubsystem(vision, hives, aim, localizer);
+        else if (!USE_TAG_POSITION_FIX) scheduler.unregisterSubsystem(localizer);
     }
 
     @Override

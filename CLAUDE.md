@@ -336,8 +336,14 @@ lists what exists, what is verified, what is still a placeholder, and the traps.
 - Field frame for all tag code: Pedro, (0, 0) at the corner where the audience wall meets the red wall, +x toward
   the blue wall, +y away from the audience, heading 0 toward the blue wall.
 - Tests: Vision Test, Tag Map Check, Hive State Test, Aim Test, Localization Test (group "Test").
-- **With the Limelight running and tags in view, the loop is 3 to 4 times slower** (20 to 39 ms against 6 to 9,
-  measured 2026-11-22) and Pedro drives worse. "A. Auto: far start" stops the camera before it parks. See BACKLOG.md.
+- **SolversLib's `SubsystemBase` registers every subsystem with the scheduler when it is created.** Creating a
+  subsystem is enough for its periodic() to run; to keep one from running, call
+  `CommandScheduler.getInstance().unregisterSubsystem(...)`. Calling periodic() by hand as well runs it twice.
+- **The tag fix never writes to the Pinpoint** (since 2026-11-22): `pedro/ShiftedLocalizer` wraps it and adds an x/y
+  shift in software (`Drivetrain.shiftPosition`). Writing a full pose every camera picture put back an old heading
+  (the far-start park ended 15 to 20 deg turned) and slowed the loop (20 to 39 ms). Use `setPose` only for a start
+  pose. Loop now: about 8 ms standing, 14 ms driving with the camera on ("Loop Check").
+- The Limelight is asked 50 times a second (`Vision.POLL_RATE_HZ`), its frame rate.
 
 ## 8b. The far-start Auto and the Pinpoint test tools (2026-11-22)
 
@@ -346,6 +352,8 @@ lists what exists, what is verified, what is still a placeholder, and the traps.
   `adb pull /sdcard/FIRST/biobuzz`; the pulled folder is git-ignored). Tuned on the test robot only.
 - "Odometry Check" (half turns, checks the Pinpoint pod offsets) and "Path Check" (straight and turning moves, and a
   replay of the Auto's moves) in `opmodes/test/`. Both showed the Pinpoint accurate to 0.2 in. and 0.1 deg.
+- "Loop Check" (`opmodes/test/LoopCheck.java`): drives back and forth and shows the time of each part of the loop,
+  with gamepad switches (camera, ask rate, tag processing, log, bulk reads).
 - After a deploy, check the new code really runs (for example new log columns): several test runs used old code.
 
 ---

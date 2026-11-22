@@ -110,3 +110,12 @@
 - Above about 60% speed the odometry pods lift when the robot changes direction hard: keep a speed limit.
 - Pedro sometimes ends a path early: retry from where the robot is.
 - Always check the deploy worked (new log columns present) before reading a test: several runs used old code.
+
+## 2026-11-22: loop time and the 15 to 20 deg park (piece 7)
+- The first guess (the camera slows the loop) was wrong. Measuring each part of the loop ("Loop Check") showed the
+  camera costs 0.1 ms. Measure before fixing.
+- SolversLib's `SubsystemBase` registers itself when created: a subsystem "not registered" still runs. That is how the
+  tag fix ran in the Auto while its switch said off, and how Loop Check first ran everything twice.
+- Never write a full pose to the Pinpoint while driving: the heading (and x, y) written was read earlier in the loop,
+  so each write erased a bit of the motion, and I2C writes are slow. Shift x and y in software instead.
+- The Limelight 3A made about 50 pictures a second on our AprilTag pipeline.

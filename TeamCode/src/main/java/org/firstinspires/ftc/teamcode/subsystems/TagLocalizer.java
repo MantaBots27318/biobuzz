@@ -204,8 +204,9 @@ public class TagLocalizer extends SubsystemBase {
 
         double dx = gain * errX;
         double dy = gain * errY;
-        Pose current = drivetrain.pose();
-        drivetrain.setPose(new Pose(current.x() + dx, current.y() + dy, current.heading()));
+        // Only x and y move, nothing is written to the Pinpoint: writing a full pose put back a heading read earlier
+        // in the loop, and each correction erased a bit of any turn (far-start park 15 to 20 deg off, 2026-11-22)
+        drivetrain.shiftPosition(dx, dy);
         // The stored poses must follow the same shift or the next picture would be compared with old ones
         for (double[] entry : history) {
             entry[1] += dx;
