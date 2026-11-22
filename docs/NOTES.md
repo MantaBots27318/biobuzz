@@ -53,6 +53,8 @@
 - A "wrong state from the side" seen once could not be reproduced.
 - Limelight on the test setup, measured by the user 2026-11-08: tilt about 28 deg, height 14 in. Defaults in
   `Hives` set to these. Both change on the final robot: measure again then.
+- 2026-11-22 (user, phase 1 review): the tilt is **35 deg** (set in the code during piece 6 when the camera was
+  re-taped; the notes still said 28). Height still 14 in.
 
 ## Aim Test at HQ, 2026-11-08
 
@@ -119,3 +121,8 @@
 - Never write a full pose to the Pinpoint while driving: the heading (and x, y) written was read earlier in the loop,
   so each write erased a bit of the motion, and I2C writes are slow. Shift x and y in software instead.
 - The Limelight 3A made about 50 pictures a second on our AprilTag pipeline.
+
+## 2026-11-22: phase 1 review (piece 8)
+- Limit an Auto by the match clock (seconds since START), not by adding up time limits: added-up limits broke the
+  30 s rule as soon as one wait changed. A late park at full speed works well (user).
+- A value changed in the code during testing (camera tilt 28 -> 35) must be written in the notes the same day.

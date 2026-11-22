@@ -17,8 +17,10 @@ import com.seattlesolvers.solverslib.command.CommandScheduler;
 import com.seattlesolvers.solverslib.command.ConditionalCommand;
 import com.seattlesolvers.solverslib.command.DeferredCommand;
 import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.ParallelRaceGroup;
 import com.seattlesolvers.solverslib.command.SequentialCommandGroup;
 import com.seattlesolvers.solverslib.command.WaitCommand;
+import com.seattlesolvers.solverslib.command.WaitUntilCommand;
 import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
@@ -27,6 +29,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Hives;
 import org.firstinspires.ftc.teamcode.subsystems.TagLocalizer;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
 import org.firstinspires.ftc.teamcode.util.Alliance;
+import org.firstinspires.ftc.teamcode.util.AllianceChoice;
 import org.firstinspires.ftc.teamcode.vision.TagMap;
 import org.firstinspires.ftc.teamcode.util.CsvLog;
 import org.firstinspires.ftc.teamcode.util.LoopTimer;
@@ -48,10 +51,14 @@ import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 public class FarStartAuto extends CommandOpMode {
     /** Time limit per path: if the robot is blocked, move on to the next step. */
     public static long PATH_TIMEOUT_MS = 5000;
-    /** First wait: the partner has to shoot 4 balls and tip our HIVE. Past it, skip everything and park. */
-    public static long FIRST_TIP_TIMEOUT_MS = 9000;
-    /** Time limit for everything before parking, so that PARK happens before the 30 s end. */
-    public static long SCORING_TIMEOUT_MS = 20000;
+    /**
+     * Match clock, seconds from START (2026-11-22, user): the robot waits for our HIVE to tip as long as it can, and
+     * the scoring part ends at PARK_START_BY_S at the latest; a park started that late drives with no speed limit
+     * (hitting the wall matters less than missing the zone). Everything stops at AUTO_END_S, before the 30 s end.
+     * (The old 9 s tip wait and 20 s scoring limit were placeholders and are gone.)
+     */
+    public static double PARK_START_BY_S = 26;
+    public static double AUTO_END_S = 29.5;
     /** How far the robot leaves the wall before it waits and shoots (from the start). Tags must stay in view. */
     public static double SHOOT_DISTANCE_IN = 8;
     public static boolean USE_TAG_POSITION_FIX = false;
@@ -114,7 +121,8 @@ public class FarStartAuto extends CommandOpMode {
     private HiveAim aim;
     private TagLocalizer localizer;
     private Hives.Cluster target = Hives.Cluster.BLUE_AUDIENCE;
-    private Alliance alliance = Alliance.RED;
+    private final AllianceChoice choice = new AllianceChoice();
+    private Alliance alliance = AllianceChoice.DEFAULT;
     private final LoopTimer loopTimer = new LoopTimer();
     private final CsvLog log = new CsvLog();
     private final ElapsedTime runTime = new ElapsedTime();
@@ -145,9 +153,9 @@ public class FarStartAuto extends CommandOpMode {
 
     @Override
     public void initialize_loop() {
-        if (gamepad1.x) alliance = Alliance.BLUE;
-        if (gamepad1.b) alliance = Alliance.RED;
-        telemetry.addData("Alliance", "%s   (X = blue, B = red)", alliance);
+        choice.update(gamepad1);
+        alliance = choice.get();
+        telemetry.addLine(choice.line());
         telemetry.update();
     }
 
@@ -175,7 +183,7 @@ public class FarStartAuto extends CommandOpMode {
         // The cell nearest to our start side is the one the partner's shot brings up: red starts far, blue audience
         target = alliance == Alliance.RED ? Hives.Cluster.RED_FAR : Hives.Cluster.BLUE_AUDIENCE;
         AimAndWaitForCell firstWait = new AimAndWaitForCell(drivetrain, hives, aim, target,
-                hive.x(), hive.y(), FIRST_TIP_TIMEOUT_MS);
+                hive.x(), hive.y(), Long.MAX_VALUE); // no own limit: the match clock ends the wait
 
         Command scoring = new SequentialCommandGroup(
                 label("to the shoot spot"),
@@ -186,22 +194,32 @@ public class FarStartAuto extends CommandOpMode {
                         // Never shoot without having seen the cell up: otherwise go straight to PARK
                         new ConditionalCommand(shoot(), new InstantCommand(), firstWait::succeeded))
                         : new SequentialCommandGroup(new WaitCommand(CAMERA_OFF_WAIT_MS), shoot())
-        ).withTimeout(SCORING_TIMEOUT_MS);
+        );
 
-        // Park from the actual pose, since a timeout can cut the sequence anywhere
+        // Park from the actual pose, since a timeout can cut the sequence anywhere. A cut wait step counts as
+        // interrupted, so it never shoots
         schedule(new SequentialCommandGroup(
-                scoring,
-                label("parking"),
+                new ParallelRaceGroup(scoring, untilClock(PARK_START_BY_S)),
                 new InstantCommand(() -> {
+                    boolean late = runTime.seconds() >= PARK_START_BY_S;
+                    step = late ? "parking (late)" : "parking";
                     if (STOP_CAMERA_BEFORE_PARK) vision.stop();
-                    speedLimit().set(PARK_SPEED_IN_PER_S);
+                    if (late) speedLimit().set(ForesightConfig.Constraint.NONE);
+                    else speedLimit().set(PARK_SPEED_IN_PER_S);
                 }),
                 // Pedro once ended the park path a third of the way (2026-11-21, cause unknown): try again from
                 // wherever the robot is until it is close enough
-                parkLeg(park),
-                parkLeg(park),
-                parkLeg(park),
-                label("done")
+                new ParallelRaceGroup(
+                        new SequentialCommandGroup(parkLeg(park), parkLeg(park), parkLeg(park)),
+                        untilClock(AUTO_END_S)),
+                new InstantCommand(() -> {
+                    if (runTime.seconds() >= AUTO_END_S) {
+                        step = "time up";
+                        drivetrain.follower.hold(drivetrain.pose());
+                    } else {
+                        step = "done";
+                    }
+                })
         ));
     }
 
@@ -281,6 +299,11 @@ public class FarStartAuto extends CommandOpMode {
 
     private Command follow(Path path) {
         return new FollowPathCommand(drivetrain.follower, path).withTimeout(PATH_TIMEOUT_MS);
+    }
+
+    /** Ends when the match clock (seconds from START) reaches the given time. */
+    private Command untilClock(double seconds) {
+        return new WaitUntilCommand(() -> runTime.seconds() >= seconds);
     }
 
     /** Shows the current step in the telemetry. */

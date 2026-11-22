@@ -59,8 +59,8 @@ Source: [TeamCode/docs/manual/](TeamCode/docs/manual/) (on `master` once PR #7 i
 - **2026-11-22: Use PlayStation button names in the code** (`cross`, `circle`, `square`, `triangle` instead of
   `a`, `b`, `x`, `y`): the team drives with PS controllers. Same physical buttons (Cross = A, Circle = B,
   Square = X, Triangle = Y), so only names and Driver Hub text change; alliance choice becomes Square = blue,
-  Circle = red. Done as its own piece on a branch from `master`, after piece 7 is finished or saved; then
-  `master` is merged into each branch still in use. To stop the old names coming back from other branches: the
+  Circle = red. Done as its own piece on a branch from `master`, after piece 8 is done and `feat/auto-far-start` and
+  `feat/loop-time` are merged into `master` (user, 2026-11-22: fewer clashes that way); then `master` is merged into each branch still in use. To stop the old names coming back from other branches: the
   rule goes into CLAUDE.md and the README, and the GitHub "Build" check fails any PR that uses `gamepad.a/b/x/y`
   or `Button.A/B/X/Y` (old names still work on the robot, so nothing breaks; it only keeps the names consistent).
 
@@ -331,6 +331,18 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
    - The Auto really unregisters what it does not use. The camera stays on during the park (user). Park speed 50 in/s
      (user: game speed; "works very well"). Limelight asked 50 times a second (user), its frame rate.
    - Lowering the ask rate further, lighter logging and Photon: not needed (loop 8 ms standing, 14 ms driving).
+
+8. **Fixes from the phase 1 review (added 2026-11-22, user: "everything in piece 8").** See docs/reviews/phase-1.md:
+   the must-fix (camera tilt 35 vs 28) and the should-fix items (park before 30 s, "A. Auto" to Test, alliance
+   default, camera offset note, then a PR to `master`). The "could improve" items went to BACKLOG.md.
+   Decided 2026-11-22 (user): camera tilt is 35 deg (the code was right, the notes old); the scoring part ends at
+   26 s from START at the latest, a late park drives at full power ("doesn't matter too much if we hit the wall"), the
+   Auto stops at 29.5 s; "A. Auto" moves to the Test group; no alliance chosen = a warning and RED by default
+   everywhere. Brief: briefs/phase1-piece8.md.
+   Also 2026-11-22 (user): the far-start Auto waits for the tip as long as it can, until 26 s; the 9 s tip wait and
+   20 s scoring limit were placeholders and are removed.
+   **Done 2026-11-22** (test robot): normal park and late park both "work very well", the late park "really good" (user).
+   Phase 1 is complete.
 
 ## Open questions
 

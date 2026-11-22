@@ -97,7 +97,8 @@ All of our code is in `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/`:
 teamcode/
 ├── opmodes/
 │   ├── teleop/MainTeleOp.java   "A. TeleOp": the match TeleOp
-│   ├── auto/MainAuto.java       "A. Auto": a single Auto for both alliances
+│   ├── auto/FarStartAuto.java   "A. Auto: far start": the match Auto, one for both alliances
+│   ├── auto/MainAuto.java       "Old Auto (placeholder)", group Test: the first template, placeholder poses
 │   └── test/                    SystemCheck (pre-match check), SlothTest, VisionTest, TagMapCheck, HiveStateTest, AimTest, LocalizationTest
 ├── subsystems/                  1 class = 1 mechanism
 │   ├── Drivetrain.java          drivetrain (holds the Pedro Follower)
@@ -133,7 +134,7 @@ teamcode/
 | Anything | `TeamCode/README.md` (rules, wiring, gamepad controls, Git workflow) |
 | TeleOp / gamepads | `opmodes/teleop/MainTeleOp.java`, the "Gamepad controls" section of the README, section 6 below |
 | New mechanism | `subsystems/Intake.java` (template), `robot/Robot.java`, `robot/HardwareNames.java` |
-| Autonomous | `opmodes/auto/MainAuto.java`, `util/Alliance.java`, `util/MatchState.java` |
+| Autonomous | `opmodes/auto/FarStartAuto.java`, `util/Alliance.java`, `util/AllianceChoice.java`, `util/MatchState.java` |
 | Anything with the Limelight / AprilTags (aiming, shooting only when the HIVE cell is up, position correction, an Auto that uses them) | `docs/AUTO-HANDOVER.md` first, then `docs/NOTES.md` (what the tests showed), `PLAN.md` (dated decisions), section 8 below |
 | Drivetrain / Pedro | `subsystems/Drivetrain.java`, `pedro/Constants.java`, the Pedro section of `TeamCode/docs/top-teams-research.md` |
 | Roadmap, best practices | `TeamCode/docs/top-teams-research.md` (priority checklist, Pedro 3.0.1 pitfalls, Sloth) |
@@ -295,7 +296,7 @@ public class Lift extends SubsystemBase {
 3. In `robot/Robot.java`: add the field `public final Lift lift;`, create it in the constructor and
    add it to `registerSubsystem(...)`. **A subsystem that is not registered never gets its
    `periodic()` called.**
-4. Use it in the OpModes (buttons in `MainTeleOp`, steps in `MainAuto`).
+4. Use it in the OpModes (buttons in `MainTeleOp`, steps in the Auto).
 5. It shows up automatically in "System Check" (which tests every motor and servo in the configuration).
 
 For a mechanism with several states (an arm, a lift with set positions), use an `enum` of positions
@@ -306,7 +307,9 @@ in `periodic()`.
 
 ## 8. Autonomous and the handover to TeleOp
 
-- `MainAuto`: the alliance is chosen during INIT (X = blue, B = red). In `preRun()`, poses are created
+- Every OpMode picks the alliance during INIT with `util/AllianceChoice` (X = blue, B = red; RED by default with an
+  "ALLIANCE NOT CHOSEN" warning, decided 2026-11-22). The match Auto is "A. Auto: far start"; `MainAuto` ("Old Auto
+  (placeholder)", group Test) is the first template. In `preRun()`, poses are created
   with `alliance.poses().of(x, y, degrees)` (blue-side coordinates) and the sequence is scheduled with
   `schedule(...)`.
 - Paths: `new FollowPathCommand(follower, Paths.line(a, b).linear(a, b))`, always with a time limit
@@ -316,7 +319,8 @@ in `periodic()`.
 - The Auto saves its pose and alliance to `MatchState` on every loop; the TeleOp reuses them if the
   Auto ran less than 3 minutes ago. `MatchState` (like every `static` field) is cleared when the app
   restarts and on every Sloth reload.
-- The poses currently in `MainAuto` are placeholders (`TODO`) to replace.
+- The poses in `MainAuto` are placeholders (`TODO`). An Auto must park before 30 s by the match clock (see
+  `FarStartAuto.PARK_START_BY_S` and `AUTO_END_S`), not by adding up time limits.
 
 ### Using the Limelight (AprilTags) in an Auto or the TeleOp
 
@@ -360,7 +364,7 @@ lists what exists, what is verified, what is still a placeholder, and the traps.
 
 ## 9. Pedro Pathing: current state
 
-- Pedro is tuned (AutoTune, PR #6, 2026-10-24): `pedro/Constants.java` has no `TODO` left. A. TeleOp and A. Auto
+- Pedro is tuned (AutoTune, PR #6, 2026-10-24): `pedro/Constants.java` has no `TODO` left. A. TeleOp and the Old Auto
   start as long as every device `Robot` needs is in the active configuration (`frontLeft`, `frontRight`,
   `backLeft`, `backRight`, `pinpoint`, `intake`, `limelight`). To test one mechanism without the others, make
   a test OpMode that builds only the subsystems it needs (see `opmodes/test/`).

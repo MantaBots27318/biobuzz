@@ -6,13 +6,36 @@
   `TELEOP_START_HEADING_DEG` in `TagLocalizer`'s settings (they are placeholders, option off). Added 2026-11-08.
 - **On the final robot:** measure the Limelight's camera offsets from the robot's reference point (now 6 in. forward,
   0 left in `TagLocalizer`) and its real tilt and height and set `Hives.CAMERA_TILT_DEG` and
-  `Hives.CAMERA_HEIGHT_IN` (now 28 deg and 14 in. on the test setup); tune the aim in `HiveAim` (turn strength,
+  `Hives.CAMERA_HEIGHT_IN` (now 35 deg and 14 in. on the test setup; 35 confirmed by the user 2026-11-22, the 28 of
+  2026-11-08 is older). The 6 / 0 offsets were measured 2026-11-14 from the Pinpoint's tracked point BEFORE the pod
+  offsets changed (2026-11-15 and 11-21; the tracked point is now 12 in. behind the front edge, middle sideways), so
+  they are out of date even on the test robot and may explain part of the tag position error (phase 1 review); tune the aim in `HiveAim` (turn strength,
   maximum and minimum power, tolerance, launcher offset). Added 2026-11-08.
 - **Fill in the Limelight's USB port** in the "Wiring" table of TeamCode/README.md (still `?`). Added 2026-11-01.
 - **On the final robot: retune the far-start Auto** (start pose, tracked point, pod offsets, speed limits, park
   spot, aim gains) and decide whether the tag position fix can be switched back on. Added 2026-11-22.
 
+## From the phase 1 review, 2026-11-22 (could improve; see docs/reviews/phase-1.md)
+- Tag fix: one switch for TeleOp and Auto (TeleOp still has it on with the taped camera, the Auto has it off).
+- Far-start Auto builds its own subsystems and sets bulk reads itself; on the final robot use `new Robot(hardwareMap)`.
+- On time-out, `AimAndWaitForCell` counts "cell up but not aimed" as a success and shoots: ask the user if that is wanted.
+- The Auto's speed limit lives in shared Pedro settings: a crash in the Auto leaves the next OpMode slow until restart.
+- Turn the scratch checks of `HiveLogic`, `AimLogic`, `LocalizerLogic`, `TagMap` into small automatic tests.
+- Tidy docs: PROGRESS.md title, AUTO-HANDOVER (tilt, "nudges the Pinpoint"), the old NOTES lesson about the camera,
+  the IMG_4942.MOV line.
+- `ShootingTest` (co-coder): POWER 1.5 is above 1, and it uses `hardwareMap` in the OpMode; the real shooter should be a subsystem.
+
+## Waiting
+
+- **Use PlayStation button names everywhere** (Cross, Circle, Square, Triangle) plus a Build check that refuses
+  A/B/X/Y. Why: the team uses PS controllers. When: right after piece 8, once `feat/auto-far-start` and
+  `feat/loop-time` are merged into `master`. See PLAN.md, Decisions, 2026-11-22. Added 2026-11-22.
+
 ## Done
+
+- 2026-11-22: piece 8, fixes from the phase 1 review: park by the match clock (wait for the tip until 26 s, late
+  park at full speed, stop at 29.5 s), "A. Auto" moved to Test as "Old Auto (placeholder)", alliance warning with RED
+  by default everywhere, tilt 35 and the stale camera offset written down. Tested on the test robot.
 
 - 2026-11-22: piece 7, loop time with the camera on: the real cause of the slow loop and of the 15 to 20 deg park
   was the tag fix writing to the Pinpoint; fixed with a software shift. Loop Check tool, ask rate 50, park 50 in/s

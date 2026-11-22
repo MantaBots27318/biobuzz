@@ -17,6 +17,7 @@ import com.seattlesolvers.solverslib.pedroCommand.FollowPathCommand;
 
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.util.Alliance;
+import org.firstinspires.ftc.teamcode.util.AllianceChoice;
 import org.firstinspires.ftc.teamcode.util.LoopTimer;
 import org.firstinspires.ftc.teamcode.util.MatchState;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
@@ -26,7 +27,8 @@ import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
  * (written for the blue side) are transformed by Alliance.poses().
  */
 @Configurable
-@Autonomous(name = "A. Auto", group = "Match", preselectTeleOp = "A. TeleOp")
+// Moved to the Test group 2026-11-22 (phase 1 review): its poses are placeholders; the match Auto is FarStartAuto
+@Autonomous(name = "Old Auto (placeholder)", group = "Test")
 public class MainAuto extends CommandOpMode {
     /** Time limit per path: if the robot is blocked (partner, opponent), move on to the next step. */
     public static long PATH_TIMEOUT_MS = 5000;
@@ -34,7 +36,8 @@ public class MainAuto extends CommandOpMode {
     public static long SCORING_TIMEOUT_MS = 25000;
 
     private Robot robot;
-    private Alliance alliance = Alliance.BLUE;
+    private final AllianceChoice choice = new AllianceChoice();
+    private Alliance alliance = AllianceChoice.DEFAULT;
     private final LoopTimer loopTimer = new LoopTimer();
 
     @Override
@@ -46,9 +49,9 @@ public class MainAuto extends CommandOpMode {
 
     @Override
     public void initialize_loop() {
-        if (gamepad1.x) alliance = Alliance.BLUE;
-        if (gamepad1.b) alliance = Alliance.RED;
-        telemetry.addData("Alliance", "%s   (X = blue, B = red)", alliance);
+        choice.update(gamepad1);
+        alliance = choice.get();
+        telemetry.addLine(choice.line());
         telemetry.update();
     }
 
