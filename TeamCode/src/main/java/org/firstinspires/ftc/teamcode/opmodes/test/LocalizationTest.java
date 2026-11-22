@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 /**
  * Tries the position correction from AprilTags. Set where you put the robot (start x, y, heading) in Panels, drive
- * with the sticks, press A for a fake bump (moves the pose by 10 in. in x and y) and watch it come back, press B to
+ * with the sticks, press Cross for a fake bump (moves the pose by 10 in. in x and y) and watch it come back, press Circle to
  * put the pose back to the start values. Needs only the drive motors, the Pinpoint and the limelight in the
  * configuration (not the whole Robot). Switch the correction on and off with TagLocalizer's ENABLED.
  */
@@ -30,7 +30,7 @@ public class LocalizationTest extends CommandOpMode {
     private Drivetrain drivetrain;
     private Vision vision;
     private TagLocalizer localizer;
-    private boolean lastA, lastB;
+    private boolean lastCross, lastCircle;
 
     @Override
     public void initialize() {
@@ -58,13 +58,13 @@ public class LocalizationTest extends CommandOpMode {
         drivetrain.driveFieldCentric(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
         super.run();
 
-        if (gamepad1.a && !lastA) {
+        if (gamepad1.cross && !lastCross) {
             Pose p = drivetrain.pose();
             drivetrain.setPose(new Pose(p.x() + 10, p.y() + 10, p.heading()));
         }
-        if (gamepad1.b && !lastB) drivetrain.setPose(startPose());
-        lastA = gamepad1.a;
-        lastB = gamepad1.b;
+        if (gamepad1.circle && !lastCircle) drivetrain.setPose(startPose());
+        lastCross = gamepad1.cross;
+        lastCircle = gamepad1.circle;
 
         Pose pose = drivetrain.pose();
         telemetry.addData("Pose", "x %.1f  y %.1f  heading %.0f deg", pose.x(), pose.y(), Math.toDegrees(pose.heading()));
@@ -75,7 +75,7 @@ public class LocalizationTest extends CommandOpMode {
                 localizer.getLastErrorIn(), localizer.getLastGain(), localizer.getSnapCount());
         telemetry.addData("Heading disagreement", "%.1f deg (information only)", localizer.getHeadingDisagreementDeg());
         telemetry.addData("Position known", localizer.isPoseKnown());
-        telemetry.addLine("A = fake bump (+10 in. x and y), B = back to the start pose");
+        telemetry.addLine("Cross = fake bump (+10 in. x and y), Circle = back to the start pose");
         telemetry.update();
     }
 

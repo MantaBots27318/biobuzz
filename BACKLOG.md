@@ -25,13 +25,15 @@
   the IMG_4942.MOV line.
 - `ShootingTest` (co-coder): POWER 1.5 is above 1, and it uses `hardwareMap` in the OpMode; the real shooter should be a subsystem.
 
-## Waiting
+## Later
 
-- **Use PlayStation button names everywhere** (Cross, Circle, Square, Triangle) plus a Build check that refuses
-  A/B/X/Y. Why: the team uses PS controllers. When: right after piece 8, once `feat/auto-far-start` and
-  `feat/loop-time` are merged into `master`. See PLAN.md, Decisions, 2026-11-22. Added 2026-11-22.
+- **Ask whether `master` should be merged into `feat/outtake-test`, `movement-testing` or `shooting-test`** (old,
+  October, maybe teammates'). Why: they still use A/B/X/Y and would fail the new Build check in a PR. Added 2026-11-22.
 
 ## Done
+
+- 2026-11-22: piece 9, PlayStation button names (Cross, Circle, Square, Triangle) in the code, Driver Hub text
+  and docs, plus a Build check that refuses A/B/X/Y (commit "Phase 1, piece 9: PlayStation button names").
 
 - 2026-11-22: piece 8, fixes from the phase 1 review: park by the match clock (wait for the tip until 26 s, late
   park at full speed, stop at 29.5 s), "A. Auto" moved to Test as "Old Auto (placeholder)", alliance warning with RED

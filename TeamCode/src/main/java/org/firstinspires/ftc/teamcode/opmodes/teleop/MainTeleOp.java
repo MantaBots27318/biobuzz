@@ -41,9 +41,9 @@ public class MainTeleOp extends CommandOpMode {
         driver.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(robot.drivetrain::resetHeading);
 
         // Operator: the intake runs while the button is held
-        operator.getGamepadButton(GamepadKeys.Button.A)
+        operator.getGamepadButton(GamepadKeys.Button.CROSS)
                 .whenHeld(new StartEndCommand(robot.intake::collect, robot.intake::stop, robot.intake));
-        operator.getGamepadButton(GamepadKeys.Button.B)
+        operator.getGamepadButton(GamepadKeys.Button.CIRCLE)
                 .whenHeld(new StartEndCommand(robot.intake::eject, robot.intake::stop, robot.intake));
     }
 

@@ -21,8 +21,8 @@ import java.util.Map;
  * one, without knowing anything about the robot. Run it in the pits after every repair.
  *
  * Gamepad 1: dpad left/right = previous/next device.
- * Motor or continuous servo: hold A = + direction, hold B = - direction.
- * Servo: Y = position 0.5, dpad up/down = +/- 0.05. A servo is only commanded after a press,
+ * Motor or continuous servo: hold Cross = + direction, hold Circle = - direction.
+ * Servo: Triangle = position 0.5, dpad up/down = +/- 0.05. A servo is only commanded after a press,
  * so a mechanism is never forced against its hard stop.
  */
 @TeleOp(name = "System Check", group = "Test")
@@ -79,7 +79,7 @@ public class SystemCheck extends OpMode {
         } else if (device instanceof Servo) {
             Servo servo = (Servo) device;
             Double target = servoTargets.get(servo);
-            if (gamepad1.y) target = 0.5;
+            if (gamepad1.triangle) target = 0.5;
             if (gamepad1.dpad_up && !lastUp) target = Range.clip((target == null ? 0.5 : target) + SERVO_STEP, 0, 1);
             if (gamepad1.dpad_down && !lastDown) target = Range.clip((target == null ? 0.5 : target) - SERVO_STEP, 0, 1);
             if (target != null) {
@@ -92,8 +92,8 @@ public class SystemCheck extends OpMode {
 
         telemetry.addLine();
         telemetry.addLine("Dpad left/right: change device");
-        telemetry.addLine("Hold A / B: spin (motor, continuous servo)");
-        telemetry.addLine("Y, dpad up/down: move (servo)");
+        telemetry.addLine("Hold Cross / Circle: spin (motor, continuous servo)");
+        telemetry.addLine("Triangle, dpad up/down: move (servo)");
         telemetry.update();
 
         lastLeft = gamepad1.dpad_left;
@@ -108,7 +108,7 @@ public class SystemCheck extends OpMode {
     }
 
     private double direction() {
-        return gamepad1.a ? 1 : gamepad1.b ? -1 : 0;
+        return gamepad1.cross ? 1 : gamepad1.circle ? -1 : 0;
     }
 
     private void stopAll() {

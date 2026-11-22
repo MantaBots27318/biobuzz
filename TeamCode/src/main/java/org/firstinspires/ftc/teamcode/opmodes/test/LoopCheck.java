@@ -27,8 +27,8 @@ import java.util.List;
 
 /**
  * Measures how long each part of the loop takes while Pedro drives, to find why the loop is 3 to 4 times slower
- * with the Limelight seeing tags (piece 7). A: the robot drives PATH_IN ahead and back again and again (put it facing
- * the HIVE tags with room in front); B: stop. Switches on the gamepad (shown on screen): camera, ask rate, our tag
+ * with the Limelight seeing tags (piece 7). Cross: the robot drives PATH_IN ahead and back again and again (put it facing
+ * the HIVE tags with room in front); Circle: stop. Switches on the gamepad (shown on screen): camera, ask rate, our tag
  * processing, log, bulk reads. Needs the drive motors, the Pinpoint and the Limelight only. Writes a log per run.
  */
 @Configurable
@@ -76,7 +76,7 @@ public class LoopCheck extends CommandOpMode {
     private final ElapsedTime statWindow = new ElapsedTime();
 
     // Gamepad edges (the buttons are read by hand: no subsystem is registered, see initialize())
-    private boolean lastA, lastB, lastX, lastY, lastUp, lastDown, lastLeft;
+    private boolean lastCross, lastCircle, lastSquare, lastTriangle, lastUp, lastDown, lastLeft;
 
     @Override
     public void initialize() {
@@ -93,7 +93,7 @@ public class LoopCheck extends CommandOpMode {
         // created (SolversLib's SubsystemBase): take them out, or each periodic() runs twice (the first test, 2026-11-22)
         CommandScheduler.getInstance().unregisterSubsystem(drivetrain, vision, hives, aim);
         if (MAX_SPEED_IN_PER_S > 0) speedLimit().set(MAX_SPEED_IN_PER_S);
-        telemetry.addLine("Face the HIVE tags with " + (int) PATH_IN + " in. clear in front, then START and A");
+        telemetry.addLine("Face the HIVE tags with " + (int) PATH_IN + " in. clear in front, then START and Cross");
         telemetry.update();
     }
 
@@ -158,30 +158,30 @@ public class LoopCheck extends CommandOpMode {
         }
     }
 
-    /** A = drive back and forth, B = stop, X = camera, Y = our tag processing, D-pad: ask rate, log, bulk reads. */
+    /** Cross = drive back and forth, Circle = stop, Square = camera, Triangle = our tag processing, D-pad: ask rate, log, bulk reads. */
     private void buttons() {
-        if (gamepad1.a && !lastA && !driving) {
+        if (gamepad1.cross && !lastCross && !driving) {
             driving = true;
             goingOut = true;
             home = drivetrain.pose();
         }
-        if (gamepad1.b && !lastB) stopDriving();
-        if (gamepad1.x && !lastX) {
+        if (gamepad1.circle && !lastCircle) stopDriving();
+        if (gamepad1.square && !lastSquare) {
             cameraOn = !cameraOn;
             if (cameraOn) vision.start();
             else vision.stop();
         }
-        if (gamepad1.y && !lastY) processingOn = !processingOn;
+        if (gamepad1.triangle && !lastTriangle) processingOn = !processingOn;
         if (gamepad1.dpad_up && !lastUp) {
             pollIndex = (pollIndex + 1) % POLL_RATES.length;
             vision.setPollRateHz(POLL_RATES[pollIndex]);
         }
         if (gamepad1.dpad_down && !lastDown) logOn = !logOn;
         if (gamepad1.dpad_left && !lastLeft) setBulk(!bulkOn);
-        lastA = gamepad1.a;
-        lastB = gamepad1.b;
-        lastX = gamepad1.x;
-        lastY = gamepad1.y;
+        lastCross = gamepad1.cross;
+        lastCircle = gamepad1.circle;
+        lastSquare = gamepad1.square;
+        lastTriangle = gamepad1.triangle;
         lastUp = gamepad1.dpad_up;
         lastDown = gamepad1.dpad_down;
         lastLeft = gamepad1.dpad_left;
@@ -225,10 +225,10 @@ public class LoopCheck extends CommandOpMode {
     }
 
     private void showScreen() {
-        telemetry.addLine("A = drive back and forth, B = stop" + (driving ? "   (DRIVING)" : ""));
-        telemetry.addData("X  camera", onOff(cameraOn) + "   (" + vision.getTags().size() + " tags in view)");
+        telemetry.addLine("Cross = drive back and forth, Circle = stop" + (driving ? "   (DRIVING)" : ""));
+        telemetry.addData("Square  camera", onOff(cameraOn) + "   (" + vision.getTags().size() + " tags in view)");
         telemetry.addData("D-pad up  ask rate", POLL_RATES[pollIndex] + " per second");
-        telemetry.addData("Y  our tag processing", onOff(processingOn));
+        telemetry.addData("Triangle  our tag processing", onOff(processingOn));
         telemetry.addData("D-pad down  log", onOff(logOn) + "   (" + log.getStatus() + ")");
         telemetry.addData("D-pad left  bulk reads", onOff(bulkOn));
         telemetry.addData("Camera frame rate", cameraOn

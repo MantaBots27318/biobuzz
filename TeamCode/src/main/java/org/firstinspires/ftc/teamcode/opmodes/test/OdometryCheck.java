@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 /**
- * Checks the Pinpoint's distances against a tape measure. Press A to zero, then push (or drive) the robot a known
+ * Checks the Pinpoint's distances against a tape measure. Press Cross to zero, then push (or drive) the robot a known
  * distance, forward or sideways, and read how far the Pinpoint says it went, in the robot's own directions, next to
  * the distance you measured. Needs only the drive motors and the Pinpoint in the configuration.
  */
@@ -23,7 +23,7 @@ public class OdometryCheck extends CommandOpMode {
 
     private Drivetrain drivetrain;
     private Pose zero = new Pose(0, 0, 0);
-    private boolean lastA;
+    private boolean lastCross;
 
     @Override
     public void initialize() {
@@ -31,7 +31,7 @@ public class OdometryCheck extends CommandOpMode {
         telemetry = TelemetryUtil.withPanels(telemetry);
         drivetrain = new Drivetrain(hardwareMap);
         register(drivetrain);
-        telemetry.addLine("Put the robot at the start of your tape measure, press START, then A to zero");
+        telemetry.addLine("Put the robot at the start of your tape measure, press START, then Cross to zero");
         telemetry.update();
     }
 
@@ -46,8 +46,8 @@ public class OdometryCheck extends CommandOpMode {
         super.run();
 
         Pose now = drivetrain.pose();
-        if (gamepad1.a && !lastA) zero = now;
-        lastA = gamepad1.a;
+        if (gamepad1.cross && !lastCross) zero = now;
+        lastCross = gamepad1.cross;
 
         // The move in the robot's own directions at the moment of zeroing: forward, and to the left
         double dx = now.x() - zero.x();
@@ -60,8 +60,8 @@ public class OdometryCheck extends CommandOpMode {
         telemetry.addData("Left", "%.1f in%s", left, percent(left));
         telemetry.addData("Turned", "%.1f deg (keep the robot pointing the same way)", turned);
         telemetry.addData("Expected", "%.0f in (change EXPECTED_IN if you measured another distance)", EXPECTED_IN);
-        telemetry.addLine("A = zero. Push straight forward, read, A again, push straight left, read.");
-        telemetry.addLine("Spin test: A, turn in place one full turn (right stick), Forward and Left should be about 0, Turned about 360");
+        telemetry.addLine("Cross = zero. Push straight forward, read, Cross again, push straight left, read.");
+        telemetry.addLine("Spin test: Cross, turn in place one full turn (right stick), Forward and Left should be about 0, Turned about 360");
         telemetry.update();
     }
 

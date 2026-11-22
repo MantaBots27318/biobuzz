@@ -224,7 +224,7 @@ OpModes) and **always** call `super.run()` in `run()`.
   without the team's agreement.
 - **Continuous inputs** (sticks, proportional triggers): read in `run()`, before `super.run()`.
 - **Actions triggered by a button**: bound **once** in `initialize()` with `GamepadEx`. Do not test
-  `gamepad2.a` in `run()` to start an action: it would restart it on every loop while the button is held.
+  `gamepad2.cross` in `run()` to start an action: it would restart it on every loop while the button is held.
 - **Stick axes**: pushing up gives a **negative** value. Hence `-gamepad1.left_stick_y` to drive forward.
 - **Pedro's frame**: +x forward, +y left, positive rotation is counter-clockwise.
   Hence `driveFieldCentric(-left_stick_y, -left_stick_x, -right_stick_x)`.
@@ -237,14 +237,14 @@ OpModes) and **always** call `super.run()` in `run()`.
 GamepadEx operator = new GamepadEx(gamepad2);
 
 // Once, on press
-operator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(robot.lift::goHigh);
+operator.getGamepadButton(GamepadKeys.Button.TRIANGLE).whenPressed(robot.lift::goHigh);
 
 // While held: one action at the start, another on release
-operator.getGamepadButton(GamepadKeys.Button.A)
+operator.getGamepadButton(GamepadKeys.Button.CROSS)
         .whenHeld(new StartEndCommand(robot.intake::collect, robot.intake::stop, robot.intake));
 
 // A longer command (sequence)
-operator.getGamepadButton(GamepadKeys.Button.X).whenPressed(new SequentialCommandGroup(
+operator.getGamepadButton(GamepadKeys.Button.SQUARE).whenPressed(new SequentialCommandGroup(
         new InstantCommand(robot.claw::open, robot.claw),
         new WaitCommand(200),
         new InstantCommand(robot.lift::goDown, robot.lift)
@@ -252,9 +252,14 @@ operator.getGamepadButton(GamepadKeys.Button.X).whenPressed(new SequentialComman
 ```
 
 Other options on `getGamepadButton(...)`: `whenReleased`, `whileHeld`, `toggleWhenPressed`.
-Buttons: `GamepadKeys.Button.A`, `B`, `X`, `Y`, `LEFT_BUMPER`, `RIGHT_BUMPER`, `DPAD_UP`,
+Buttons: `GamepadKeys.Button.CROSS`, `CIRCLE`, `SQUARE`, `TRIANGLE`, `LEFT_BUMPER`, `RIGHT_BUMPER`, `DPAD_UP`,
 `DPAD_DOWN`, `DPAD_LEFT`, `DPAD_RIGHT`, `BACK`, `START`, `LEFT_STICK_BUTTON`, `RIGHT_STICK_BUTTON`
-(the PlayStation names `CROSS`, `CIRCLE`, `SQUARE`, `TRIANGLE` also exist).
+(`BACK` is the PS SHARE button).
+
+**We drive with PlayStation controllers (decided 2026-11-22): use only the PlayStation names**, `gamepad1.cross`,
+`.circle`, `.square`, `.triangle` and `Button.CROSS`... (same physical buttons as A, B, X, Y). Never `gamepad1.a`/`b`/`x`/`y`
+or `Button.A`/`B`/`X`/`Y`: they still work on the robot, but the "Build" check (`scripts/check-button-names.sh`)
+fails the PR.
 
 The **last argument** of the commands (`robot.intake`) is the subsystem they use: two commands using
 the same subsystem never run at the same time, the new one interrupts the old one. Always pass it.
@@ -307,7 +312,7 @@ in `periodic()`.
 
 ## 8. Autonomous and the handover to TeleOp
 
-- Every OpMode picks the alliance during INIT with `util/AllianceChoice` (X = blue, B = red; RED by default with an
+- Every OpMode picks the alliance during INIT with `util/AllianceChoice` (Square = blue, Circle = red; RED by default with an
   "ALLIANCE NOT CHOSEN" warning, decided 2026-11-22). The match Auto is "A. Auto: far start"; `MainAuto` ("Old Auto
   (placeholder)", group Test) is the first template. In `preRun()`, poses are created
   with `alliance.poses().of(x, y, degrees)` (blue-side coordinates) and the sequence is scheduled with
@@ -426,6 +431,7 @@ On Windows: `.\gradlew.bat` instead of `./gradlew`.
 - Calling `follower.update()` anywhere other than `Drivetrain.periodic()`.
 - Putting `sleep()` or a waiting `while` loop in an OpMode.
 - Testing a button in `run()` to trigger a one-off action instead of using `GamepadEx`.
+- Using the Xbox button names (`gamepad1.a`, `Button.X`) instead of the PlayStation ones (`cross`, `square`).
 - Making a setting `final` (Panels can no longer change it) or forgetting `@Configurable`.
 - Adding a dependency anywhere other than the `dependencies` block of `TeamCode/build.gradle`
   (the `buildscript` block only accepts plugin `classpath` entries).
