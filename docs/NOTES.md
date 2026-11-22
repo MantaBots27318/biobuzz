@@ -90,3 +90,23 @@
   Wi-Fi, the page opened before the app was ready, no OpMode running, the app stuck (restart it).
 - User: "it all works": the fake bump (14 in., above the 10 in. snap limit) recovers in a split second; the
   driving check, the unknown start, a moving HIVE and a covered camera were all fine. No numbers were kept.
+
+## 2026-11-15: far-start Auto test on the test robot
+- The Limelight's **sensor gain** was too low: tags were clear in the web feed but not read. Raising the gain in the
+  Limelight web page made it see many more tags. Check this first when "the camera sees the tag but the code does not".
+- The first log (`adb pull /sdcard/FIRST/biobuzz`): the target cell read UP about 0.4 s after its tags came into view,
+  but the Auto shot 2.8 s later because the aim error hovered at 1.5 deg, the limit of "aimed". The Auto now uses a
+  looser `READY_TOLERANCE_DEG` of 3.
+- The park spot was 11 in. from the wall for the robot's centre, too close; it is now a gap plus the robot's half
+  length (`PARK_EDGE_GAP_IN`, `ROBOT_HALF_LENGTH_IN`).
+
+## 2026-11-21/22: far-start Auto, lessons
+- With the Limelight running and tags in view, the loop was 20 to 39 ms instead of 6 to 9, and the park ended 15 to
+  20 deg turned while the Pinpoint believed it was right. Stopping the camera before the park fixed it. The SDK's
+  Limelight3A polls the camera over the network 100 times a second on a background thread and parses the whole JSON
+  there (more tags = bigger JSON). Suspect that first when driving gets worse with the camera on.
+- Pinpoint pod offsets are checked with half turns (Odometry Check) and paths with Path Check: both were accurate to
+  0.2 in. and 0.1 deg once the offsets were right.
+- Above about 60% speed the odometry pods lift when the robot changes direction hard: keep a speed limit.
+- Pedro sometimes ends a path early: retry from where the robot is.
+- Always check the deploy worked (new log columns present) before reading a test: several runs used old code.

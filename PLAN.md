@@ -277,6 +277,8 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 
 ## Pieces (order confirmed 2026-11-01)
 
+(2026-11-14: planning notes for the Autos, the other branches and the coach's ideas are in docs/AUTO-PLANNING-NOTES.md.)
+
 (2026-11-14: a handover for piece 6, the Auto, is in docs/AUTO-HANDOVER.md.)
 
 (2026-11-08: piece 2 done: "Tag Map Check" on the rebuilt rig gives every cluster, both HIVE positions, within 1 to 3 in. The tag map is now confirmed for the real field layout.)
@@ -294,6 +296,19 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 4. **Position correction:** mix Pinpoint and tags. Postponed 2026-11-01, **reinstated 2026-11-08** (x and y only).
 5. **TeleOp aim:** hold RIGHT_BUMPER to face our HIVE (camera only, decided 2026-11-08).
 6. **Auto:** aim step, "wait until HIVE down" step with time limit, then park if it never tips.
+   **Changed 2026-11-14:** pretend the robot is finished (shoot and intake are placeholder waits, the Limelight
+   steps are real). Build the user's Auto 1 (far start) first, in blue coordinates (the co-coder's red routes are
+   rotated); the shooter is at the front with the intake, so headings are fixed. The other two Autos reuse the
+   building blocks. See briefs/phase1-piece6.md and docs/AUTO-PLANNING-NOTES.md.
+
+   **Done 2026-11-22 (test robot, to retune on the final robot).** Decisions made while building it:
+   - 2026-11-21: shoot spot = 8 in. straight ahead of the start (not the co-coder's (60, 106)); the FLOWER pickup and second shot are left out for now.
+   - 2026-11-21: start pose measured (robot 16.5 x 17 in., back on the far wall, left edge 2 in. from the centre line); the Pinpoint's tracked point is 3.4 in. behind the robot's middle; pod offsets x 2.3, y -5.8.
+   - 2026-11-21: speed limit 40 in/s (pods lift above about 60%), park at 30 in/s, park retried up to 3 times if Pedro stops short.
+   - 2026-11-21: park in the real LOADING ZONE (14.75 x 24 in., far side), front 3.5 in. from the wall; the user is happy with where it ends (2026-11-22).
+   - 2026-11-21: the tag position fix stays off in this Auto until the camera is properly mounted (the taped camera moved the Pinpoint 5 in. wrong).
+   - 2026-11-22: the Limelight is stopped before the park: with it running the loop is 3 to 4 times slower and the park ended 15 to 20 deg turned.
+   - Next (user, 2026-11-22): make the loop lighter with the camera on (see BACKLOG.md), since it does not need the final robot.
 
 ## Open questions
 
@@ -308,3 +323,5 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 - **Position-based aiming (turn toward the HIVE using the Pinpoint position), set aside 2026-11-08.** Why: the
   Limelight is locked in place on the robot, so aiming with it is simpler and needs no start pose. It may
   come back to help when no tag is in view.
+
+(2026-11-14: in the far-start Auto the robot faces the HIVE from the Pinpoint (heading toward the HIVE pivot) while the target cell is not up or its tags are not in view, and uses the Limelight aim only once the cell is up. This is Auto-only; the TeleOp aim stays camera-only. The FLOWER pickup and second shot were taken out for now.)

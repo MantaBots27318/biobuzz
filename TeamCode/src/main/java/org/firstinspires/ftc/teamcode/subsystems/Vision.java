@@ -69,6 +69,8 @@ public class Vision extends SubsystemBase {
     public void stop() {
         limelight.stop();
         started = false;
+        // No old tags left behind for the HIVE watcher, the aim or the log
+        tags = Collections.emptyList();
     }
 
     @Override
