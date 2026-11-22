@@ -14,7 +14,7 @@ What we learned from the best teams, and the priority list: [docs/top-teams-rese
 teamcode/
 ├── opmodes/
 │   ├── teleop/MainTeleOp     "A. TeleOp", the match TeleOp
-│   ├── auto/FarStartAuto     "A. Auto: far start", the match Auto (one for both alliances, X = blue, B = red)
+│   ├── auto/FarStartAuto     "A. Auto: far start", the match Auto (one for both alliances, Square = blue, Circle = red)
 │   ├── auto/MainAuto         "Old Auto (placeholder)", group Test: the first template, placeholder poses
 │   └── test/                 SystemCheck (pre-match check), SlothTest…
 ├── subsystems/               1 class = 1 mechanism (Drivetrain, Intake…)
@@ -35,7 +35,7 @@ update, then make a separate commit.
 
 ## During a match
 
-1. **Auto** ("A. Auto: far start"): choose the alliance during init (X = blue, B = red). Until a button is
+1. **Auto** ("A. Auto: far start"): choose the alliance during init (Square = blue, Circle = red). Until a button is
    pressed the screen shows `ALLIANCE NOT CHOSEN: RED by default`. On every loop, the Auto saves its pose and
    alliance (`MatchState`). Each path has a time limit (`PATH_TIMEOUT_MS`); at `PARK_START_BY_S` (26 s after
    START) at the latest the robot stops scoring and parks (at full speed if that late), and everything stops at
@@ -56,15 +56,18 @@ is plugged in correctly.
 
 Keep this up to date with every control change in `MainTeleOp`: it is the drivers' reference.
 
+We drive with PlayStation controllers, so buttons go by their PlayStation names: Cross, Circle, Square, Triangle
+(the Xbox A, B, X, Y). BACK is the SHARE button.
+
 | Gamepad | Input | Action |
 |---|---|---|
 | 1 (driver) | Left stick | Field-centric movement (forward = away from the driver) |
 | 1 (driver) | Right stick (X axis) | Rotation |
 | 1 (driver) | BACK | Reset the heading (robot facing away from the driver) |
 | 1 (driver) | Hold RIGHT_BUMPER | Turn by itself to face the up CELL of our HIVE (needs a tag in view; the right stick turns again on release) |
-| 1 (driver) | X / B during init | Choose the blue / red alliance |
-| 2 (operator) | Hold A | Intake: collect |
-| 2 (operator) | Hold B | Intake: eject |
+| 1 (driver) | Square / Circle during init | Choose the blue / red alliance |
+| 2 (operator) | Hold Cross | Intake: collect |
+| 2 (operator) | Hold Circle | Intake: eject |
 
 ## Rules
 
@@ -77,6 +80,8 @@ Keep this up to date with every control change in `MainTeleOp`: it is the driver
 - **Watch the loop rate** ("Loop" telemetry). If it drops after a change, that change is the cause.
 - **Java naming**: `PascalCase` for classes, `camelCase` for methods, `UPPER_SNAKE` for constants.
 - **Code comments and telemetry are in English.**
+- **PlayStation button names only** (`gamepad1.cross`, `Button.CIRCLE`…, never `a`/`b`/`x`/`y`): the "Build"
+  check fails otherwise (`scripts/check-button-names.sh`).
 - Old test OpModes get `@Disabled` or are deleted. Git keeps the history, so no commented-out code.
 
 ## Wiring

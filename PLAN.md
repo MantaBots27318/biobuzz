@@ -63,6 +63,9 @@ Source: [TeamCode/docs/manual/](TeamCode/docs/manual/) (on `master` once PR #7 i
   `feat/loop-time` are merged into `master` (user, 2026-11-22: fewer clashes that way); then `master` is merged into each branch still in use. To stop the old names coming back from other branches: the
   rule goes into CLAUDE.md and the README, and the GitHub "Build" check fails any PR that uses `gamepad.a/b/x/y`
   or `Button.A/B/X/Y` (old names still work on the robot, so nothing breaks; it only keeps the names consistent).
+  **Done 2026-11-22 as piece 9** (brief: briefs/phase1-piece9.md): the check is `scripts/check-button-names.sh`, run
+  first in the Build workflow. BACK is noted as the PS SHARE button. The old branches (`feat/outtake-test`,
+  `movement-testing`, `shooting-test`) were not touched: ask the user before merging `master` into any of them.
 
 ## Idea to confirm: telling when a HIVE has finished tipping
 

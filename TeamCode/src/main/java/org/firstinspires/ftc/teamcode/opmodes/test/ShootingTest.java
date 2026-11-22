@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
  * Shooting test: spins the two shooter motors at the same speed in opposite directions, then stops
  * them by itself after RUN_TIME_S.
  *
- * Gamepad 1: A = shoot, B = same thing in the opposite direction.
+ * Gamepad 1: Cross = shoot, Circle = same thing in the opposite direction.
  * If the ball goes the wrong way, swap the two motors' directions below (or the buttons).
  */
 @Configurable
@@ -25,7 +25,7 @@ public class ShootingTest extends OpMode {
     private DcMotorEx leftMotor, rightMotor;
     private final ElapsedTime timer = new ElapsedTime();
     private double direction = 0; // 1 = shoot, -1 = reverse, 0 = stopped
-    private boolean lastA, lastB;
+    private boolean lastCross, lastCircle;
 
     @Override
     public void init() {
@@ -37,10 +37,10 @@ public class ShootingTest extends OpMode {
     @Override
     public void loop() {
         // Only a new press starts a run, so holding a button does not restart it
-        if (gamepad1.a && !lastA) start(1);
-        if (gamepad1.b && !lastB) start(-1);
-        lastA = gamepad1.a;
-        lastB = gamepad1.b;
+        if (gamepad1.cross && !lastCross) start(1);
+        if (gamepad1.circle && !lastCircle) start(-1);
+        lastCross = gamepad1.cross;
+        lastCircle = gamepad1.circle;
 
         if (direction != 0 && timer.seconds() >= RUN_TIME_S) {
             direction = 0;
@@ -52,7 +52,7 @@ public class ShootingTest extends OpMode {
 
         telemetry.addData("State", direction > 0 ? "shooting" : direction < 0 ? "reversing" : "stopped");
         telemetry.addData("Time left", "%.1f s", direction == 0 ? 0 : Math.max(0, RUN_TIME_S - timer.seconds()));
-        telemetry.addLine("A: shoot   B: opposite direction");
+        telemetry.addLine("Cross: shoot   Circle: opposite direction");
         telemetry.update();
     }
 

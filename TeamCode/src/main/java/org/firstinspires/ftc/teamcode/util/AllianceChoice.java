@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.util;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 /**
- * The alliance picked during INIT (X = blue, B = red). RED until a button is pressed, with a warning on the
+ * The alliance picked during INIT (Square = blue, Circle = red). RED until a button is pressed, with a warning on the
  * screen, so a forgotten press is seen (decided 2026-11-22: warn and keep a default, the same in every OpMode).
  */
 public class AllianceChoice {
@@ -20,11 +20,11 @@ public class AllianceChoice {
 
     /** Call in initialize_loop(). */
     public void update(Gamepad gamepad) {
-        if (gamepad.x) {
+        if (gamepad.square) {
             alliance = Alliance.BLUE;
             chosen = true;
         }
-        if (gamepad.b) {
+        if (gamepad.circle) {
             alliance = Alliance.RED;
             chosen = true;
         }
@@ -40,7 +40,7 @@ public class AllianceChoice {
 
     /** The first telemetry line of INIT. */
     public String line() {
-        return chosen ? String.format("Alliance: %s (chosen)   X = blue, B = red", alliance)
-                : String.format("ALLIANCE NOT CHOSEN: %s by default (X = blue, B = red)", alliance);
+        return chosen ? String.format("Alliance: %s (chosen)   Square = blue, Circle = red", alliance)
+                : String.format("ALLIANCE NOT CHOSEN: %s by default (Square = blue, Circle = red)", alliance);
     }
 }

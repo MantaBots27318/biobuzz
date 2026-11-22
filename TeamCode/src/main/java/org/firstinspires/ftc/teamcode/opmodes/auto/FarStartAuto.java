@@ -109,7 +109,7 @@ public class FarStartAuto extends CommandOpMode {
     // Blue-side poses (inches, degrees): the co-coder's red route rotated by 180 degrees about (72, 72).
     // The shoot spot is SHOOT_DISTANCE_IN straight ahead of the start (it replaces the co-coder's (60, 106)).
     // Measured 2026-11-21: robot 16.5 x 17 in., back against the far wall, left edge 2 in. from the centre line.
-    // The Pinpoint's tracked point is about 3.4 in. BEHIND the robot's middle (Path Check, Y), so it is 5.1 in. from the back edge
+    // The Pinpoint's tracked point is about 3.4 in. BEHIND the robot's middle (Path Check, Triangle), so it is 5.1 in. from the back edge
     private static final double[] START = {82.25, 5.1, 90};
     // Park spot: blue x is 144 minus the centre distance from the wall, computed in preRun()
     private static final double[] PARK = {0, 0, 0};

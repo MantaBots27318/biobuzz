@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
  * Tries the TeleOp aim on its own: drive with the left stick, turn with the right stick, hold RIGHT_BUMPER to
  * turn by itself toward the up CELL of our HIVE. Needs only the drive motors, the Pinpoint and the limelight
  * in the configuration (not the whole Robot). Start with the wheels off the ground or lots of room.
- * X / B during INIT chooses the alliance.
+ * Square / Circle during INIT chooses the alliance.
  */
 @TeleOp(name = "Aim Test", group = "Test")
 public class AimTest extends CommandOpMode {

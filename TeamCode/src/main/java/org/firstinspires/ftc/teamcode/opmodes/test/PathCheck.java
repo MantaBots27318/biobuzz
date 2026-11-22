@@ -21,8 +21,8 @@ import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 /**
- * Checks Pedro driving a path against a tape measure. Press X to zero, then A: the robot drives a straight line
- * straight ahead (or B: to its left, or Y: sideways while turning like the far-start park leg) and holds the end. Measure how far it really went and compare with what
+ * Checks Pedro driving a path against a tape measure. Press Square to zero, then Cross: the robot drives a straight line
+ * straight ahead (or Circle: to its left, or Triangle: sideways while turning like the far-start park leg) and holds the end. Measure how far it really went and compare with what
  * the Pinpoint says. Needs only the drive motors and the Pinpoint. Same speed limit as the far-start Auto.
  */
 @Configurable
@@ -42,7 +42,7 @@ public class PathCheck extends CommandOpMode {
     public static double AUTO_PARK_DY_IN = -30.1;
     public static double AUTO_PARK_HEADING_DEG = 180;
     public static double AUTO_PARK_SPEED_IN_PER_S = 30;
-    // Y: the move of the far-start park leg (sideways while turning)
+    // Triangle: the move of the far-start park leg (sideways while turning)
     public static double TURNING_MOVE_IN = 44;
     public static double TURNING_MOVE_TURN_DEG = -88;
 
@@ -58,11 +58,11 @@ public class PathCheck extends CommandOpMode {
         if (MAX_SPEED_IN_PER_S > 0) speedLimit().set(MAX_SPEED_IN_PER_S);
 
         GamepadEx driver = new GamepadEx(gamepad1);
-        driver.getGamepadButton(GamepadKeys.Button.X).whenPressed(() -> zero = drivetrain.pose());
-        driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(drive(1, 0, DISTANCE_IN, 0));
-        driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(drive(0, 1, DISTANCE_IN, 0));
+        driver.getGamepadButton(GamepadKeys.Button.SQUARE).whenPressed(() -> zero = drivetrain.pose());
+        driver.getGamepadButton(GamepadKeys.Button.CROSS).whenPressed(drive(1, 0, DISTANCE_IN, 0));
+        driver.getGamepadButton(GamepadKeys.Button.CIRCLE).whenPressed(drive(0, 1, DISTANCE_IN, 0));
         // To the robot's right while turning clockwise, as in the park leg of the far-start Auto
-        driver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(drive(0, -1, TURNING_MOVE_IN, TURNING_MOVE_TURN_DEG));
+        driver.getGamepadButton(GamepadKeys.Button.TRIANGLE).whenPressed(drive(0, -1, TURNING_MOVE_IN, TURNING_MOVE_TURN_DEG));
         driver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(new SequentialCommandGroup(
                 move(0, -AUTO_LEG_IN, Double.NaN, true),
                 new WaitCommand((long) AUTO_WAIT_MS),
@@ -71,7 +71,7 @@ public class PathCheck extends CommandOpMode {
                 new InstantCommand(() -> speedLimit().set(MAX_SPEED_IN_PER_S > 0 ? MAX_SPEED_IN_PER_S
                         : ForesightConfig.Constraint.NONE))));
 
-        telemetry.addLine("Put the robot at the start of your tape measure, press START, then X to zero");
+        telemetry.addLine("Put the robot at the start of your tape measure, press START, then Square to zero");
         telemetry.update();
     }
 
@@ -121,8 +121,8 @@ public class PathCheck extends CommandOpMode {
         telemetry.addData("Heading", "%.1f deg (started at %.0f)", Math.toDegrees(now.heading()), START_HEADING_DEG);
         telemetry.addData("Speed", "%.1f in/s (limit %.0f)", speed, MAX_SPEED_IN_PER_S);
         telemetry.addData("Following a path", drivetrain.follower.isBusy());
-        telemetry.addLine("X = zero here. A = drive " + (int) DISTANCE_IN + " in. ahead, B = to the left.");
-        telemetry.addLine("Y = " + (int) TURNING_MOVE_IN + " in. to the right while turning " + (int) TURNING_MOVE_TURN_DEG + " deg (the park leg).");
+        telemetry.addLine("Square = zero here. Cross = drive " + (int) DISTANCE_IN + " in. ahead, Circle = to the left.");
+        telemetry.addLine("Triangle = " + (int) TURNING_MOVE_IN + " in. to the right while turning " + (int) TURNING_MOVE_TURN_DEG + " deg (the park leg).");
         telemetry.addLine("D-pad up = the far-start Auto's moves (start where the Auto starts).");
         telemetry.addLine("Measure with the tape how far it really went and compare.");
         telemetry.update();
