@@ -8,6 +8,7 @@ import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
 
 import org.firstinspires.ftc.teamcode.robot.Robot;
 import org.firstinspires.ftc.teamcode.util.Alliance;
+import org.firstinspires.ftc.teamcode.util.AllianceChoice;
 import org.firstinspires.ftc.teamcode.util.LoopTimer;
 import org.firstinspires.ftc.teamcode.util.MatchState;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
@@ -16,7 +17,8 @@ import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 @TeleOp(name = "A. TeleOp", group = "Match")
 public class MainTeleOp extends CommandOpMode {
     private Robot robot;
-    private Alliance alliance;
+    private final AllianceChoice choice = new AllianceChoice();
+    private Alliance alliance = AllianceChoice.DEFAULT;
     private boolean poseFromAuto;
     private final LoopTimer loopTimer = new LoopTimer();
 
@@ -28,7 +30,9 @@ public class MainTeleOp extends CommandOpMode {
 
         // If an Auto just ran, reuse its alliance and pose
         poseFromAuto = MatchState.isFresh();
-        alliance = poseFromAuto ? MatchState.alliance() : Alliance.BLUE;
+        // An alliance handed over by the Auto counts as chosen
+        if (poseFromAuto) choice.preset(MatchState.alliance());
+        alliance = choice.get();
 
         GamepadEx driver = new GamepadEx(gamepad1);
         GamepadEx operator = new GamepadEx(gamepad2);
@@ -45,9 +49,9 @@ public class MainTeleOp extends CommandOpMode {
 
     @Override
     public void initialize_loop() {
-        if (gamepad1.x) alliance = Alliance.BLUE;
-        if (gamepad1.b) alliance = Alliance.RED;
-        telemetry.addData("Alliance", "%s   (X = blue, B = red)", alliance);
+        choice.update(gamepad1);
+        alliance = choice.get();
+        telemetry.addLine(choice.line());
         telemetry.addData("Pose", poseFromAuto ? "taken from the Auto"
                 : robot.localizer.hasTeleOpStart() ? "set to the TeleOp start spot (see the settings)"
                 : "place the robot facing away from the driver");

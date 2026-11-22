@@ -14,7 +14,8 @@ What we learned from the best teams, and the priority list: [docs/top-teams-rese
 teamcode/
 ├── opmodes/
 │   ├── teleop/MainTeleOp     "A. TeleOp", the match TeleOp
-│   ├── auto/MainAuto         "A. Auto", a single Auto, alliance chosen during init (X = blue, B = red)
+│   ├── auto/FarStartAuto     "A. Auto: far start", the match Auto (one for both alliances, X = blue, B = red)
+│   ├── auto/MainAuto         "Old Auto (placeholder)", group Test: the first template, placeholder poses
 │   └── test/                 SystemCheck (pre-match check), SlothTest…
 ├── subsystems/               1 class = 1 mechanism (Drivetrain, Intake…)
 ├── robot/
@@ -34,12 +35,14 @@ update, then make a separate commit.
 
 ## During a match
 
-1. **Auto** ("A. Auto"): choose the alliance during init (X = blue, B = red). On every loop, the Auto saves
-   its pose and alliance (`MatchState`). Each path has a time limit (`PATH_TIMEOUT_MS`), and past
-   `SCORING_TIMEOUT_MS` the robot gives up and goes to park.
+1. **Auto** ("A. Auto: far start"): choose the alliance during init (X = blue, B = red). Until a button is
+   pressed the screen shows `ALLIANCE NOT CHOSEN: RED by default`. On every loop, the Auto saves its pose and
+   alliance (`MatchState`). Each path has a time limit (`PATH_TIMEOUT_MS`); at `PARK_START_BY_S` (26 s after
+   START) at the latest the robot stops scoring and parks (at full speed if that late), and everything stops at
+   `AUTO_END_S` (29.5 s).
 2. **TeleOp** ("A. TeleOp", preselected at the end of the Auto): it reuses the Auto's pose and alliance if
    the Auto ran less than 3 minutes ago. Otherwise, place the robot facing away from the driver and choose
-   the alliance during init. BACK (gamepad 1) resets the heading when the robot faces away from the driver.
+   the alliance during init (RED if nobody presses a button, with a warning). BACK (gamepad 1) resets the heading when the robot faces away from the driver.
 3. After a Sloth reload or an app restart, `MatchState` is empty: the TeleOp falls back to the
    "robot facing away from the driver" case.
 
@@ -89,6 +92,8 @@ Keep this up to date with every configuration change on the Driver Hub.
 | `pinpoint`    | goBILDA Pinpoint  | Control Hub I2C  | ?    |
 | `intake`      | Motor             | Expansion Hub    | ?    |
 | `limelight`   | Limelight 3A      | Control Hub USB  | ?    |
+| `shooterLeft` | Motor             | ?                | ?    |
+| `shooterRight`| Motor             | ?                | ?    |
 
 ## Owners
 

@@ -23,6 +23,11 @@ import java.util.List;
 @Configurable
 public class Vision extends SubsystemBase {
     public static int PIPELINE = 0;
+    /**
+     * How many times a second the SDK asks the camera for its results (SDK default 100). The camera makes about 50
+     * pictures a second (Loop Check, 2026-11-22), so asking more often only fetches the same picture again.
+     */
+    public static int POLL_RATE_HZ = 50;
 
     /** One tag seen by the camera. Camera frame: x right, y down, z forward (inches). */
     public static class Tag {
@@ -54,6 +59,7 @@ public class Vision extends SubsystemBase {
     private long frameId = 0;
     private double lastFrameStamp = Double.NaN;
     private double latencyMs = 0;
+    private int pollRateHz = POLL_RATE_HZ;
 
     public Vision(HardwareMap hardwareMap) {
         limelight = hardwareMap.get(Limelight3A.class, HardwareNames.LIMELIGHT);
@@ -62,6 +68,7 @@ public class Vision extends SubsystemBase {
     /** Starts the camera. Call it at START, not in the constructor, so INIT stays light. */
     public void start() {
         limelight.pipelineSwitch(PIPELINE);
+        limelight.setPollRateHz(pollRateHz);
         limelight.start();
         started = true;
     }
@@ -69,6 +76,8 @@ public class Vision extends SubsystemBase {
     public void stop() {
         limelight.stop();
         started = false;
+        // No old tags left behind for the HIVE watcher, the aim or the log
+        tags = Collections.emptyList();
     }
 
     @Override
@@ -132,5 +141,21 @@ public class Vision extends SubsystemBase {
 
     public boolean isConnected() {
         return limelight.isConnected();
+    }
+
+    /**
+     * How many times a second the SDK asks the camera for its results (default 100). The SDK ignores a change while
+     * the camera runs, so it is stopped and started again around it.
+     */
+    public void setPollRateHz(int hz) {
+        pollRateHz = hz;
+        if (started) limelight.stop();
+        limelight.setPollRateHz(hz);
+        if (started) limelight.start();
+    }
+
+    /** The camera's frames per second. SLOW (a network request to the camera): never call it every loop. */
+    public double requestCameraFps() {
+        return limelight.getStatus().getFps();
     }
 }

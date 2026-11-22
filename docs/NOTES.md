@@ -53,6 +53,8 @@
 - A "wrong state from the side" seen once could not be reproduced.
 - Limelight on the test setup, measured by the user 2026-11-08: tilt about 28 deg, height 14 in. Defaults in
   `Hives` set to these. Both change on the final robot: measure again then.
+- 2026-11-22 (user, phase 1 review): the tilt is **35 deg** (set in the code during piece 6 when the camera was
+  re-taped; the notes still said 28). Height still 14 in.
 
 ## Aim Test at HQ, 2026-11-08
 
@@ -90,3 +92,37 @@
   Wi-Fi, the page opened before the app was ready, no OpMode running, the app stuck (restart it).
 - User: "it all works": the fake bump (14 in., above the 10 in. snap limit) recovers in a split second; the
   driving check, the unknown start, a moving HIVE and a covered camera were all fine. No numbers were kept.
+
+## 2026-11-15: far-start Auto test on the test robot
+- The Limelight's **sensor gain** was too low: tags were clear in the web feed but not read. Raising the gain in the
+  Limelight web page made it see many more tags. Check this first when "the camera sees the tag but the code does not".
+- The first log (`adb pull /sdcard/FIRST/biobuzz`): the target cell read UP about 0.4 s after its tags came into view,
+  but the Auto shot 2.8 s later because the aim error hovered at 1.5 deg, the limit of "aimed". The Auto now uses a
+  looser `READY_TOLERANCE_DEG` of 3.
+- The park spot was 11 in. from the wall for the robot's centre, too close; it is now a gap plus the robot's half
+  length (`PARK_EDGE_GAP_IN`, `ROBOT_HALF_LENGTH_IN`).
+
+## 2026-11-21/22: far-start Auto, lessons
+- With the Limelight running and tags in view, the loop was 20 to 39 ms instead of 6 to 9, and the park ended 15 to
+  20 deg turned while the Pinpoint believed it was right. Stopping the camera before the park fixed it. The SDK's
+  Limelight3A polls the camera over the network 100 times a second on a background thread and parses the whole JSON
+  there (more tags = bigger JSON). Suspect that first when driving gets worse with the camera on.
+- Pinpoint pod offsets are checked with half turns (Odometry Check) and paths with Path Check: both were accurate to
+  0.2 in. and 0.1 deg once the offsets were right.
+- Above about 60% speed the odometry pods lift when the robot changes direction hard: keep a speed limit.
+- Pedro sometimes ends a path early: retry from where the robot is.
+- Always check the deploy worked (new log columns present) before reading a test: several runs used old code.
+
+## 2026-11-22: loop time and the 15 to 20 deg park (piece 7)
+- The first guess (the camera slows the loop) was wrong. Measuring each part of the loop ("Loop Check") showed the
+  camera costs 0.1 ms. Measure before fixing.
+- SolversLib's `SubsystemBase` registers itself when created: a subsystem "not registered" still runs. That is how the
+  tag fix ran in the Auto while its switch said off, and how Loop Check first ran everything twice.
+- Never write a full pose to the Pinpoint while driving: the heading (and x, y) written was read earlier in the loop,
+  so each write erased a bit of the motion, and I2C writes are slow. Shift x and y in software instead.
+- The Limelight 3A made about 50 pictures a second on our AprilTag pipeline.
+
+## 2026-11-22: phase 1 review (piece 8)
+- Limit an Auto by the match clock (seconds since START), not by adding up time limits: added-up limits broke the
+  30 s rule as soon as one wait changed. A late park at full speed works well (user).
+- A value changed in the code during testing (camera tilt 28 -> 35) must be written in the notes the same day.

@@ -17,14 +17,14 @@ import java.util.List;
 @Configurable
 public class Hives extends SubsystemBase {
     // How the Limelight is mounted: measured on the test setup, to redo on the final robot
-    public static double CAMERA_TILT_DEG = 28;
+    public static double CAMERA_TILT_DEG = 35;
     public static double CAMERA_HEIGHT_IN = 14;
     // Tag centers are about 49.7 in. high when a CELL is up and 35.9 in. when it is down
     public static double UP_HEIGHT_THRESHOLD_IN = 43;
     public static double MIN_HEIGHT_DIFFERENCE_IN = 6;
     // Tags are tilted 30 deg from straight down in both resting positions, about 0 deg halfway through a tip
     public static double TAG_ANGLE_DEG = 30;
-    public static double TAG_ANGLE_TOLERANCE_DEG = 12;
+    public static double TAG_ANGLE_TOLERANCE_DEG = 20;
     public static long HOLD_MS = 150;
     public static long NOT_SEEN_MS = 400;
 

@@ -78,8 +78,9 @@ only the subsystems it needs, so it runs with a partial configuration (the full 
 
 ## NOT verified or still placeholders (tune on the final robot)
 
-- Camera mounting: tilt 28 deg and height 14 in. (`Hives`), offsets 6 in. forward, 0 left (`TagLocalizer`).
-  They were measured on the test setup and change on the final robot.
+- Camera mounting: tilt 35 deg (28 until piece 6, confirmed 35 on 2026-11-22) and height 14 in. (`Hives`), offsets
+  6 in. forward, 0 left (`TagLocalizer`, measured before the Pinpoint pod offsets changed: out of date). They were
+  measured on the test setup and change on the final robot.
 - All gains and limits: `HiveAim` (turn strength, min and max power, tolerance, offset), `TagLocalizer` (gain,
   distances, speeds, height tolerance, snap), `Hives` (thresholds, hold time).
 - The Limelight's real picture delay: `Vision.getLatencyMs()` is capture + targeting + staleness; keep

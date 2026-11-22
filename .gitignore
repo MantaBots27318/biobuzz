@@ -81,3 +81,6 @@ lint/tmp/
 # lint/reports/
 # Personal VS Code settings (tasks.json is shared)
 .vscode/settings.json
+
+# Logs pulled from the robot with adb pull
+/biobuzz/

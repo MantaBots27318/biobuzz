@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.subsystems.HiveAim;
 import org.firstinspires.ftc.teamcode.subsystems.Hives;
 import org.firstinspires.ftc.teamcode.subsystems.Vision;
 import org.firstinspires.ftc.teamcode.util.Alliance;
+import org.firstinspires.ftc.teamcode.util.AllianceChoice;
 import org.firstinspires.ftc.teamcode.util.TelemetryUtil;
 
 /**
@@ -22,7 +23,8 @@ public class AimTest extends CommandOpMode {
     private Vision vision;
     private Hives hives;
     private HiveAim aim;
-    private Alliance alliance = Alliance.BLUE;
+    private final AllianceChoice choice = new AllianceChoice();
+    private Alliance alliance = AllianceChoice.DEFAULT;
 
     @Override
     public void initialize() {
@@ -38,9 +40,9 @@ public class AimTest extends CommandOpMode {
 
     @Override
     public void initialize_loop() {
-        if (gamepad1.x) alliance = Alliance.BLUE;
-        if (gamepad1.b) alliance = Alliance.RED;
-        telemetry.addData("Alliance", "%s   (X = blue, B = red)", alliance);
+        choice.update(gamepad1);
+        alliance = choice.get();
+        telemetry.addLine(choice.line());
         telemetry.addLine("Place the robot facing away from the driver, then press START");
         telemetry.update();
     }

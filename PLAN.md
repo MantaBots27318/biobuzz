@@ -56,6 +56,14 @@ Source: [TeamCode/docs/manual/](TeamCode/docs/manual/) (on `master` once PR #7 i
   face the HIVE by itself and stays aimed; the driver keeps moving with the left stick. On release,
   the right stick controls turning again.
 
+- **2026-11-22: Use PlayStation button names in the code** (`cross`, `circle`, `square`, `triangle` instead of
+  `a`, `b`, `x`, `y`): the team drives with PS controllers. Same physical buttons (Cross = A, Circle = B,
+  Square = X, Triangle = Y), so only names and Driver Hub text change; alliance choice becomes Square = blue,
+  Circle = red. Done as its own piece on a branch from `master`, after piece 8 is done and `feat/auto-far-start` and
+  `feat/loop-time` are merged into `master` (user, 2026-11-22: fewer clashes that way); then `master` is merged into each branch still in use. To stop the old names coming back from other branches: the
+  rule goes into CLAUDE.md and the README, and the GitHub "Build" check fails any PR that uses `gamepad.a/b/x/y`
+  or `Button.A/B/X/Y` (old names still work on the robot, so nothing breaks; it only keeps the names consistent).
+
 ## Idea to confirm: telling when a HIVE has finished tipping
 
 A tag reading gives the tag's position and angle. Compare it to the 2 known stable positions of that
@@ -277,6 +285,8 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 
 ## Pieces (order confirmed 2026-11-01)
 
+(2026-11-14: planning notes for the Autos, the other branches and the coach's ideas are in docs/AUTO-PLANNING-NOTES.md.)
+
 (2026-11-14: a handover for piece 6, the Auto, is in docs/AUTO-HANDOVER.md.)
 
 (2026-11-08: piece 2 done: "Tag Map Check" on the rebuilt rig gives every cluster, both HIVE positions, within 1 to 3 in. The tag map is now confirmed for the real field layout.)
@@ -294,6 +304,45 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 4. **Position correction:** mix Pinpoint and tags. Postponed 2026-11-01, **reinstated 2026-11-08** (x and y only).
 5. **TeleOp aim:** hold RIGHT_BUMPER to face our HIVE (camera only, decided 2026-11-08).
 6. **Auto:** aim step, "wait until HIVE down" step with time limit, then park if it never tips.
+   **Changed 2026-11-14:** pretend the robot is finished (shoot and intake are placeholder waits, the Limelight
+   steps are real). Build the user's Auto 1 (far start) first, in blue coordinates (the co-coder's red routes are
+   rotated); the shooter is at the front with the intake, so headings are fixed. The other two Autos reuse the
+   building blocks. See briefs/phase1-piece6.md and docs/AUTO-PLANNING-NOTES.md.
+
+   **Done 2026-11-22 (test robot, to retune on the final robot).** Decisions made while building it:
+   - 2026-11-21: shoot spot = 8 in. straight ahead of the start (not the co-coder's (60, 106)); the FLOWER pickup and second shot are left out for now.
+   - 2026-11-21: start pose measured (robot 16.5 x 17 in., back on the far wall, left edge 2 in. from the centre line); the Pinpoint's tracked point is 3.4 in. behind the robot's middle; pod offsets x 2.3, y -5.8.
+   - 2026-11-21: speed limit 40 in/s (pods lift above about 60%), park at 30 in/s, park retried up to 3 times if Pedro stops short.
+   - 2026-11-21: park in the real LOADING ZONE (14.75 x 24 in., far side), front 3.5 in. from the wall; the user is happy with where it ends (2026-11-22).
+   - 2026-11-21: the tag position fix stays off in this Auto until the camera is properly mounted (the taped camera moved the Pinpoint 5 in. wrong).
+   - 2026-11-22: the Limelight is stopped before the park: with it running the loop is 3 to 4 times slower and the park ended 15 to 20 deg turned.
+   - Next (user, 2026-11-22): make the loop lighter with the camera on (see BACKLOG.md), since it does not need the final robot.
+
+7. **Loop time with the camera on (added 2026-11-22, user).** With tags in view the loop is 3 to 4 times slower and
+   Pedro drives worse. It does not need the final robot. Decided 2026-11-22: measure first with a "Loop Check" test
+   tool (the robot drives the same back-and-forth path again and again so before/after numbers compare, user's
+   choice); add bulk reads to the far-start Auto (user: "maybe bulk reads would help"); Photon set aside (see below).
+   **Done 2026-11-22.** Decisions made while building it:
+   - The camera was not the cause: Loop Check showed it costs 0.1 ms. The cause was `TagLocalizer` writing a full
+     pose to the Pinpoint at every picture (slow writes, and an old heading put back during turns). It was running in
+     the Auto even with `USE_TAG_POSITION_FIX` false, because SolversLib subsystems register themselves.
+   - The tag fix now shifts x and y in software (`pedro/ShiftedLocalizer`), never the heading; "Localization Test"
+     re-run by the user: bump and heading both fine.
+   - The Auto really unregisters what it does not use. The camera stays on during the park (user). Park speed 50 in/s
+     (user: game speed; "works very well"). Limelight asked 50 times a second (user), its frame rate.
+   - Lowering the ask rate further, lighter logging and Photon: not needed (loop 8 ms standing, 14 ms driving).
+
+8. **Fixes from the phase 1 review (added 2026-11-22, user: "everything in piece 8").** See docs/reviews/phase-1.md:
+   the must-fix (camera tilt 35 vs 28) and the should-fix items (park before 30 s, "A. Auto" to Test, alliance
+   default, camera offset note, then a PR to `master`). The "could improve" items went to BACKLOG.md.
+   Decided 2026-11-22 (user): camera tilt is 35 deg (the code was right, the notes old); the scoring part ends at
+   26 s from START at the latest, a late park drives at full power ("doesn't matter too much if we hit the wall"), the
+   Auto stops at 29.5 s; "A. Auto" moves to the Test group; no alliance chosen = a warning and RED by default
+   everywhere. Brief: briefs/phase1-piece8.md.
+   Also 2026-11-22 (user): the far-start Auto waits for the tip as long as it can, until 26 s; the 9 s tip wait and
+   20 s scoring limit were placeholders and are removed.
+   **Done 2026-11-22** (test robot): normal park and late park both "work very well", the late park "really good" (user).
+   Phase 1 is complete.
 
 ## Open questions
 
@@ -308,3 +357,8 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
 - **Position-based aiming (turn toward the HIVE using the Pinpoint position), set aside 2026-11-08.** Why: the
   Limelight is locked in place on the robot, so aiming with it is simpler and needs no start pose. It may
   come back to help when no tag is in view.
+
+(2026-11-14: in the far-start Auto the robot faces the HIVE from the Pinpoint (heading toward the HIVE pivot) while the target cell is not up or its tags are not in view, and uses the Limelight aim only once the cell is up. This is Auto-only; the TeleOp aim stays camera-only. The FLOWER pickup and second shot were taken out for now.)
+- **Photon (PhotonFTC), set aside 2026-11-22.** A library that speeds up talking to the hub's motors and sensors.
+  Why set aside: it does not touch the Limelight (the cause of our slow loop), it is marked experimental, and nothing
+  shows it works with SDK 12. It may come back if the hub reads turn out to be the slow part.
