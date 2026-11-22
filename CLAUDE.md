@@ -336,6 +336,17 @@ lists what exists, what is verified, what is still a placeholder, and the traps.
 - Field frame for all tag code: Pedro, (0, 0) at the corner where the audience wall meets the red wall, +x toward
   the blue wall, +y away from the audience, heading 0 toward the blue wall.
 - Tests: Vision Test, Tag Map Check, Hive State Test, Aim Test, Localization Test (group "Test").
+- **With the Limelight running and tags in view, the loop is 3 to 4 times slower** (20 to 39 ms against 6 to 9,
+  measured 2026-11-22) and Pedro drives worse. "A. Auto: far start" stops the camera before it parks. See BACKLOG.md.
+
+## 8b. The far-start Auto and the Pinpoint test tools (2026-11-22)
+
+- "A. Auto: far start" (`opmodes/auto/FarStartAuto.java`): 8 in. ahead, `AimAndWaitForCell`, shoot (placeholder),
+  park in the LOADING ZONE. Writes a CSV log per run to `/sdcard/FIRST/biobuzz/` (pull it with
+  `adb pull /sdcard/FIRST/biobuzz`; the pulled folder is git-ignored). Tuned on the test robot only.
+- "Odometry Check" (half turns, checks the Pinpoint pod offsets) and "Path Check" (straight and turning moves, and a
+  replay of the Auto's moves) in `opmodes/test/`. Both showed the Pinpoint accurate to 0.2 in. and 0.1 deg.
+- After a deploy, check the new code really runs (for example new log columns): several test runs used old code.
 
 ---
 
