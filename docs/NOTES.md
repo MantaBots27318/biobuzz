@@ -126,3 +126,14 @@
 - Limit an Auto by the match clock (seconds since START), not by adding up time limits: added-up limits broke the
   30 s rule as soon as one wait changed. A late park at full speed works well (user).
 - A value changed in the code during testing (camera tilt 28 -> 35) must be written in the notes the same day.
+
+## 2026-11-25: Sloth crash on the Control Hub ("Fatal class locating error")
+- Every INIT showed a red "Fatal class locating error occurred while running Sloth" and the OpMode crashed. The cause
+  was two files in the hub's `/sdcard/FIRST/ExternalLibraries/`: Sloth tries to load every file there as code and
+  crashes on anything it cannot load. First a broken 55-byte temp file (`e21a29e0-….mtpmgr.tmp`), probably left by a
+  file copy over USB that was cut off; then an old EasyOpenCV library (`EasyOpenCV_v1_5_2_OBJ_bundle.aar` and its
+  folder), copied there by hand in 2022 for OnBotJava. Our code does not use it (we use the Limelight).
+- Fixed by connecting the hub to the Mac by USB cable and deleting both with adb; the folder is now empty and INIT
+  no longer crashes. Removing Sloth's code and reinstalling did not help, and nothing on the hub was out of date
+  (Control Hub OS 1.1.6, firmware 1.8.2).
+- If the error comes back, look in `/sdcard/FIRST/ExternalLibraries/` first: it should stay empty.
