@@ -347,6 +347,14 @@ The Pinpoint drifts slowly and can jump after a bump (wheel slip). Tags don't dr
    **Done 2026-11-22** (test robot): normal park and late park both "work very well", the late park "really good" (user).
    Phase 1 is complete.
 
+10. **Auto 1, part 2 (added 2026-11-22, user: "the Auto we just finished is not actually done").** After the first
+   shot: FLOWER pickup, then shoot again or park with the balls loaded. Decisions 2026-11-22 (user):
+   - **It takes 8 POLLEN to tip the HIVE**, so our first 4 do not tip it: the target cell is still up for the second
+     load, which tips it. (Corrects the 2026-11-14 notes, which said our 4 tip it.)
+   - Second shot: drive back to the shoot spot, **aim with the camera, no waiting** for the cell, then shoot.
+   - Shoot again or park: a **fixed cut-off time** (one setting), not computed from step times.
+   - FLOWER stop: a **placeholder** (the co-coder's red (47, 129), front toward the far wall); fixed on the final robot.
+
 ## Open questions
 
 - Confirm the "telling when a HIVE has finished tipping" idea above once we see real readings.

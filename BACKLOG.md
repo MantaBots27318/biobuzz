@@ -14,6 +14,14 @@
 - **Fill in the Limelight's USB port** in the "Wiring" table of TeamCode/README.md (still `?`). Added 2026-11-01.
 - **On the final robot: retune the far-start Auto** (start pose, tracked point, pod offsets, speed limits, park
   spot, aim gains) and decide whether the tag position fix can be switched back on. Added 2026-11-22.
+- **Measure the Auto's loop time with the tag correction on.** Re-run "A. Auto: far start" with
+  `TagLocalizer.ENABLED` on (and `USE_TAG_POSITION_FIX` on) and check `loop_ms` in the log. Why: no Auto log has it
+  since the 2026-11-22 fix (software x/y shift instead of writing to the Pinpoint): the 5 Auto runs after the fix
+  (2026-11-22 from 14:33) all had the correction off (`loc_status` "waiting for a picture" on every row). The
+  "8 ms standing, 14 ms driving" in CLAUDE.md comes from Loop Check, not from the Auto with the correction running.
+  Found 2026-11-27 while making portfolio graphs from the 48 logs pulled from the robot.
+  In the same run, compare the gap between the tag position and the odometry with the old numbers in docs/NOTES.md
+  (0.2 in. stopped, 1.2 in. moving, measured before the fix, so the true gap may be bigger).
 
 ## From the phase 1 review, 2026-11-22 (could improve; see docs/reviews/phase-1.md)
 - Tag fix: one switch for TeleOp and Auto (TeleOp still has it on with the taped camera, the Auto has it off).
@@ -29,6 +37,12 @@
 
 - **Ask whether `master` should be merged into `feat/outtake-test`, `movement-testing` or `shooting-test`** (old,
   October, maybe teammates'). Why: they still use A/B/X/Y and would fail the new Build check in a PR. Added 2026-11-22.
+
+- **Far-start Auto (Auto 1) is not finished (user, 2026-11-22):** if we shoot early enough, go get more balls from
+  the FLOWER, then either shoot again and PARK if there is time, or PARK with the balls loaded for TELEOP. This is
+  the FLOWER pickup and second shot of the original brief (taken out 2026-11-21 to get the park right). Needs a
+  "how much time is left?" choice. Then the user's Autos 2 and 3 (docs/AUTO-PLANNING-NOTES.md). The user has
+  two other Autos, not three.
 
 ## Done
 

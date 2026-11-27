@@ -121,6 +121,16 @@
 - Never write a full pose to the Pinpoint while driving: the heading (and x, y) written was read earlier in the loop,
   so each write erased a bit of the motion, and I2C writes are slow. Shift x and y in software instead.
 - The Limelight 3A made about 50 pictures a second on our AprilTag pipeline.
+- 2026-11-27 (portfolio graphs, 48 logs pulled from the robot): the Loop Check log from before its fix
+  (`loopcheck-1795375190319.csv`, 2026-11-22 14:19) has inflated totals (about 27 ms driving), because that first
+  version ran everything twice (`commands_ms` about equal to `pedro_ms`). Its camera on vs off comparison is still
+  valid (26.8 vs 26.7 ms driving, `camera_ms` 0.1), but never quote its totals as "the loop before the fix".
+- 2026-11-27, same logs: over 19 far-start runs with the tag correction on, the gap between the tag position and
+  the odometry was 0.2 in. (median) with the robot stopped and 1.2 in. while moving (90% of rows within 0.8 in. and
+  3.5 in.). These runs are probably from before the 2026-11-22 fix, when the correction wrote a full pose to the
+  Pinpoint at every camera picture: that pulled the odometry toward the tags, so the true gap may be bigger than
+  these numbers. The stopped vs moving difference (0.2 vs 1.2 in.) still holds, since both were measured the same
+  way. No Auto log yet has the loop time with the correction on after the fix (see BACKLOG).
 
 ## 2026-11-22: phase 1 review (piece 8)
 - Limit an Auto by the match clock (seconds since START), not by adding up time limits: added-up limits broke the
